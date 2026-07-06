@@ -33,12 +33,13 @@ const Login = () => {
       {error && <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-3 rounded-lg mb-6 text-sm">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
         <div>
-          <label className="block text-sm font-medium text-[#94A3B8]">Email address</label>
+          <label className="block text-sm font-medium text-[#94A3B8]">Email Address</label>
           <input
             type="email"
             required
             autoComplete="off"
-            className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
+            placeholder="johnsmith@gmail.com"
+            className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -50,7 +51,8 @@ const Login = () => {
               type={showPassword ? 'text' : 'password'}
               required
               autoComplete="new-password"
-              className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 pl-4 pr-10 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
+              placeholder="••••••••"
+              className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 pl-4 pr-10 text-[#FFFFFF] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
