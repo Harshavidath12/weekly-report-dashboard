@@ -6,6 +6,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ManagerDashboard from './pages/dashboard/ManagerDashboard';
 import PersonalReport from './pages/dashboard/PersonalReport';
+import ProjectManager from './pages/dashboard/ProjectManager';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<ManagerDashboard />} />
           <Route path="personal" element={<PersonalReport />} />
+          <Route path="projects" element={<ProjectManager />} />
         </Route>
 
         {/* Default Redirect */}

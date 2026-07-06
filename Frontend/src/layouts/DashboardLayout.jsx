@@ -1,6 +1,6 @@
 import { Outlet, Navigate, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, LayoutDashboard, FileText } from 'lucide-react';
+import { LogOut, LayoutDashboard, FileText, Folder } from 'lucide-react';
 
 const DashboardLayout = () => {
   const { user, logout, loading } = useAuth();
@@ -29,9 +29,14 @@ const DashboardLayout = () => {
         </div>
         <nav className="flex-1 p-4 space-y-2">
           {user.role === 'Manager' && (
-            <Link to="/dashboard" className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#1E293B] transition-colors">
-              <LayoutDashboard size={20} className="text-[#94A3B8]" /> Team Dashboard
-            </Link>
+            <>
+              <Link to="/dashboard" className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#1E293B] transition-colors">
+                <LayoutDashboard size={20} className="text-[#94A3B8]" /> Team Dashboard
+              </Link>
+              <Link to="/dashboard/projects" className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#1E293B] transition-colors">
+                <Folder size={20} className="text-[#94A3B8]" /> Manage Projects
+              </Link>
+            </>
           )}
           <Link to="/dashboard/personal" className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#1E293B] transition-colors">
             <FileText size={20} className="text-[#94A3B8]" /> My Reports
