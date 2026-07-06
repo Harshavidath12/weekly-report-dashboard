@@ -21,6 +21,8 @@ app.use(express.json());
 
 // Mount routers
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/reports', require('./routes/reportRoutes'));
+app.use('/api/projects', require('./routes/projectRoutes'));
 
 // Basic route
 app.get('/', (req, res) => {
