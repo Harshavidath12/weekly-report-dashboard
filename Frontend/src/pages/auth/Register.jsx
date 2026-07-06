@@ -8,14 +8,31 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('Team Member');
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  const validatePassword = (pwd) => {
+    const minLength = pwd.length >= 6;
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasNumber = /[0-9]/.test(pwd);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
+    return minLength && hasUpper && hasLower && hasNumber && hasSpecial;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setPasswordError('');
+
+    if (!validatePassword(password)) {
+      setPasswordError('Password must be at least 6 characters long and include an uppercase letter, lowercase letter, number, and a special character.');
+      return;
+    }
+
     setIsLoading(true);
     
     try {
@@ -32,12 +49,13 @@ const Register = () => {
     <div>
       <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">Create a new account</h3>
       {error && <div className="bg-red-50 text-red-500 p-3 rounded mb-4 text-sm">{error}</div>}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
         <div>
           <label className="block text-sm font-medium text-gray-700">Full Name</label>
           <input
             type="text"
             required
+            autoComplete="off"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -48,6 +66,7 @@ const Register = () => {
           <input
             type="email"
             required
+            autoComplete="off"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -58,10 +77,12 @@ const Register = () => {
           <input
             type="password"
             required
+            autoComplete="new-password"
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {passwordError && <p className="mt-2 text-sm text-red-500">{passwordError}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Role</label>
