@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, CheckCircle2, Circle } from 'lucide-react';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -16,13 +16,15 @@ const Register = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const validatePassword = (pwd) => {
-    const minLength = pwd.length >= 6;
-    const hasUpper = /[A-Z]/.test(pwd);
-    const hasLower = /[a-z]/.test(pwd);
-    const hasNumber = /[0-9]/.test(pwd);
-    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
-    return minLength && hasUpper && hasLower && hasNumber && hasSpecial;
+  const criteria = [
+    { label: 'Min. 6 characters', met: password.length >= 6 },
+    { label: '1 Uppercase & 1 Lowercase', met: /[A-Z]/.test(password) && /[a-z]/.test(password) },
+    { label: '1 Number', met: /[0-9]/.test(password) },
+    { label: '1 Special character (@, #, $, etc.)', met: /[!@#$%^&*(),.?":{}|<>]/.test(password) }
+  ];
+
+  const validatePassword = () => {
+    return criteria.every(c => c.met);
   };
 
   const handleSubmit = async (e) => {
@@ -30,8 +32,8 @@ const Register = () => {
     setError('');
     setPasswordError('');
 
-    if (!validatePassword(password)) {
-      setPasswordError('Password must be at least 6 characters long and include an uppercase letter, lowercase letter, number, and a special character.');
+    if (!validatePassword()) {
+      setPasswordError('Please ensure all password requirements are met.');
       return;
     }
 
@@ -58,18 +60,20 @@ const Register = () => {
             type="text"
             required
             autoComplete="off"
-            className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
+            placeholder="John Smith"
+            className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-[#94A3B8]">Email address</label>
+          <label className="block text-sm font-medium text-[#94A3B8]">Email Address</label>
           <input
             type="email"
             required
             autoComplete="off"
-            className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
+            placeholder="johnsmith@gmail.com"
+            className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -81,7 +85,8 @@ const Register = () => {
               type={showPassword ? 'text' : 'password'}
               required
               autoComplete="new-password"
-              className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 pl-4 pr-10 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
+              placeholder="••••••••"
+              className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 pl-4 pr-10 text-[#FFFFFF] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -92,6 +97,14 @@ const Register = () => {
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
+          </div>
+          <div className="mt-4 space-y-2">
+            {criteria.map((c, i) => (
+              <div key={i} className={`text-xs flex items-center transition-colors duration-300 ${c.met ? 'text-green-400' : 'text-slate-500'}`}>
+                {c.met ? <CheckCircle2 size={14} className="mr-2" /> : <Circle size={14} className="mr-2" />}
+                {c.label}
+              </div>
+            ))}
           </div>
           {passwordError && <p className="mt-2 text-sm text-red-400">{passwordError}</p>}
         </div>
