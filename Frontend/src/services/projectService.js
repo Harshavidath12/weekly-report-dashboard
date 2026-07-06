@@ -38,11 +38,25 @@ const deleteProject = async (projectId) => {
   return response.data;
 };
 
+// Join a project
+const joinProject = async (projectId) => {
+  const response = await axios.post(API_URL + projectId + '/join', {}, authConfig());
+  return response.data;
+};
+
+// Leave a project
+const leaveProject = async (projectId) => {
+  const response = await axios.post(API_URL + projectId + '/leave', {}, authConfig());
+  return response.data;
+};
+
 const projectService = {
   getProjects,
   createProject,
   updateProject,
   deleteProject,
+  joinProject,
+  leaveProject,
 };
 
 export default projectService;
