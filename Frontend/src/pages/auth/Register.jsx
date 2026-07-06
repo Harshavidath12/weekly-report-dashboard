@@ -122,7 +122,7 @@ const Register = () => {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full flex justify-center py-2.5 px-4 mt-16 border border-transparent rounded-lg text-sm font-bold text-[#FFFFFF] bg-[#2563EB] hover:bg-[#3B82F6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#151F33] focus:ring-[#3B82F6] disabled:opacity-50 transition-all duration-200"
+          className="w-full flex justify-center py-2.5 px-4 mt-8 border border-transparent rounded-lg text-sm font-bold text-[#FFFFFF] bg-[#2563EB] hover:bg-[#3B82F6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#151F33] focus:ring-[#3B82F6] disabled:opacity-50 transition-all duration-200"
           style={{ boxShadow: '0 4px 14px 0 rgba(37, 99, 235, 0.39)' }}
         >
           {isLoading ? 'Creating account...' : 'Sign up'}
