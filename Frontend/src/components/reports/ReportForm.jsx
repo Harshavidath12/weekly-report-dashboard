@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, X, Save, Send, CheckCircle2, Loader2 } from 'lucide-react';
 import projectService from '../../services/projectService';
+import { useAuth } from '../../context/AuthContext';
 
 const ReportForm = ({ initialData, onSave, isSaving }) => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
   });
   const [projects, setProjects] = useState([]);
   const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -141,11 +143,22 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
               className={inputClasses}
             >
               <option value="" disabled>Select a project</option>
-              {projects.map((proj) => (
-                <option key={proj._id} value={proj._id}>
-                  {proj.name}
-                </option>
-              ))}
+              
+              <optgroup label="My Assigned Projects">
+                {projects.filter(p => p.assignedMembers?.includes(user?._id)).map((proj) => (
+                  <option key={proj._id} value={proj._id}>
+                    {proj.name}
+                  </option>
+                ))}
+              </optgroup>
+              
+              <optgroup label="Other Projects">
+                {projects.filter(p => !p.assignedMembers?.includes(user?._id)).map((proj) => (
+                  <option key={proj._id} value={proj._id}>
+                    {proj.name}
+                  </option>
+                ))}
+              </optgroup>
             </select>
           )}
         </div>
