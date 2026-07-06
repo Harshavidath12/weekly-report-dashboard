@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, Folder, X, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Folder, X, Loader2, Users, Check } from 'lucide-react';
 import projectService from '../../services/projectService';
+import userService from '../../services/userService';
 import { useAuth } from '../../context/AuthContext';
 
 const ProjectManager = () => {
   const { user } = useAuth();
   const [projects, setProjects] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,22 +15,27 @@ const ProjectManager = () => {
   
   const [formData, setFormData] = useState({
     name: '',
-    description: ''
+    description: '',
+    assignedMembers: []
   });
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    fetchProjects();
+    fetchData();
   }, []);
 
-  const fetchProjects = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
-      const data = await projectService.getProjects();
-      setProjects(data);
+      const [projectsData, usersData] = await Promise.all([
+        projectService.getProjects(),
+        user?.role === 'Manager' ? userService.getAllUsers() : Promise.resolve([])
+      ]);
+      setProjects(projectsData);
+      setUsers(usersData);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch projects.');
+      setError('Failed to fetch data.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -38,10 +45,14 @@ const ProjectManager = () => {
   const openModal = (project = null) => {
     if (project) {
       setEditingProject(project);
-      setFormData({ name: project.name, description: project.description });
+      setFormData({ 
+        name: project.name, 
+        description: project.description,
+        assignedMembers: project.assignedMembers || [] 
+      });
     } else {
       setEditingProject(null);
-      setFormData({ name: '', description: '' });
+      setFormData({ name: '', description: '', assignedMembers: [] });
     }
     setIsModalOpen(true);
   };
@@ -49,11 +60,23 @@ const ProjectManager = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingProject(null);
-    setFormData({ name: '', description: '' });
+    setFormData({ name: '', description: '', assignedMembers: [] });
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const toggleUserAssignment = (userId) => {
+    setFormData(prev => {
+      const isAssigned = prev.assignedMembers.includes(userId);
+      return {
+        ...prev,
+        assignedMembers: isAssigned 
+          ? prev.assignedMembers.filter(id => id !== userId)
+          : [...prev.assignedMembers, userId]
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -65,7 +88,7 @@ const ProjectManager = () => {
       } else {
         await projectService.createProject(formData);
       }
-      await fetchProjects();
+      await fetchData();
       closeModal();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to save project');
@@ -78,36 +101,52 @@ const ProjectManager = () => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
     try {
       await projectService.deleteProject(id);
-      await fetchProjects();
+      await fetchData();
     } catch (err) {
       alert('Failed to delete project');
     }
   };
 
-  if (user?.role !== 'Manager') {
-    return (
-      <div className="p-8 text-center bg-[#1E293B] border border-[#334155] rounded-xl text-red-400">
-        You do not have permission to view this page.
-      </div>
-    );
-  }
+  const handleJoin = async (id) => {
+    try {
+      await projectService.joinProject(id);
+      await fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to join project');
+    }
+  };
+
+  const handleLeave = async (id) => {
+    try {
+      await projectService.leaveProject(id);
+      await fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to leave project');
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-[#F8FAFC]">Project Management</h2>
+          <h2 className="text-2xl font-bold text-[#F8FAFC]">
+            {user?.role === 'Manager' ? 'Project Management' : 'Available Projects'}
+          </h2>
           <p className="text-[#94A3B8] mt-1">
-            Manage projects and categories for team reports.
+            {user?.role === 'Manager' 
+              ? 'Manage projects and assign team members.' 
+              : 'Browse active projects and join them to start reporting.'}
           </p>
         </div>
-        <button
-          onClick={() => openModal()}
-          className="flex items-center px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#3B82F6] shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-all font-medium"
-        >
-          <Plus size={18} className="mr-2" /> Add Project
-        </button>
+        {user?.role === 'Manager' && (
+          <button
+            onClick={() => openModal()}
+            className="flex items-center px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#3B82F6] shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-all font-medium"
+          >
+            <Plus size={18} className="mr-2" /> Add Project
+          </button>
+        )}
       </div>
 
       {error && (
@@ -125,45 +164,81 @@ const ProjectManager = () => {
           {projects.length === 0 ? (
             <div className="col-span-full bg-[#1E293B] p-12 rounded-xl border border-[#334155] text-center">
               <Folder size={48} className="mx-auto text-[#334155] mb-4" />
-              <h3 className="text-lg font-medium text-[#F8FAFC] mb-2">No projects yet</h3>
-              <p className="text-[#94A3B8] mb-6">Create the first project to get started.</p>
+              <h3 className="text-lg font-medium text-[#F8FAFC] mb-2">No projects available</h3>
+              <p className="text-[#94A3B8] mb-6">There are currently no active projects.</p>
             </div>
           ) : (
-            projects.map((project) => (
-              <div key={project._id} className="bg-[#1E293B] p-5 rounded-xl border border-[#334155] hover:border-[#3B82F6]/30 transition-colors flex flex-col justify-between">
-                <div>
-                  <h3 className="font-semibold text-[#F8FAFC] text-lg mb-1 flex items-center">
-                    <Folder size={16} className="mr-2 text-[#3B82F6]" />
-                    {project.name}
-                  </h3>
-                  <p className="text-sm text-[#94A3B8] line-clamp-2">
-                    {project.description || 'No description provided.'}
-                  </p>
+            projects.map((project) => {
+              const isAssigned = project.assignedMembers?.includes(user._id);
+
+              return (
+                <div key={project._id} className="bg-[#1E293B] p-5 rounded-xl border border-[#334155] hover:border-[#3B82F6]/30 transition-colors flex flex-col justify-between">
+                  <div>
+                    <h3 className="font-semibold text-[#F8FAFC] text-lg mb-1 flex items-center justify-between">
+                      <span className="flex items-center">
+                        <Folder size={16} className="mr-2 text-[#3B82F6]" />
+                        {project.name}
+                      </span>
+                      {user?.role !== 'Manager' && isAssigned && (
+                        <span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full flex items-center">
+                          <Check size={12} className="mr-1" /> Joined
+                        </span>
+                      )}
+                    </h3>
+                    <p className="text-sm text-[#94A3B8] line-clamp-2 mt-2">
+                      {project.description || 'No description provided.'}
+                    </p>
+                    <div className="mt-3 flex items-center text-xs text-[#94A3B8]">
+                      <Users size={14} className="mr-1.5" />
+                      {project.assignedMembers?.length || 0} members
+                    </div>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-[#334155] flex justify-end gap-2">
+                    {user?.role === 'Manager' ? (
+                      <>
+                        <button
+                          onClick={() => openModal(project)}
+                          className="p-2 text-[#94A3B8] hover:text-[#3B82F6] hover:bg-[#3B82F6]/10 rounded-lg transition-colors"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(project._id)}
+                          className="p-2 text-[#94A3B8] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </>
+                    ) : (
+                      isAssigned ? (
+                        <button
+                          onClick={() => handleLeave(project._id)}
+                          className="w-full py-2 text-sm text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white border border-red-500/20 rounded-lg transition-colors"
+                        >
+                          Leave Project
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleJoin(project._id)}
+                          className="w-full py-2 text-sm text-[#F8FAFC] bg-[#0F172A] hover:border-[#3B82F6] border border-[#334155] rounded-lg transition-colors"
+                        >
+                          Join Project
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-[#334155] flex justify-end gap-2">
-                  <button
-                    onClick={() => openModal(project)}
-                    className="p-2 text-[#94A3B8] hover:text-[#3B82F6] hover:bg-[#3B82F6]/10 rounded-lg transition-colors"
-                  >
-                    <Edit2 size={16} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(project._id)}
-                    className="p-2 text-[#94A3B8] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       )}
 
-      {/* Modal */}
-      {isModalOpen && (
+      {/* Modal for Managers */}
+      {isModalOpen && user?.role === 'Manager' && (
         <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50">
-          <div className="bg-[#1E293B] border border-[#334155] rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+          <div className="bg-[#1E293B] border border-[#334155] rounded-xl shadow-2xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
             <div className="flex justify-between items-center p-4 border-b border-[#334155]">
               <h3 className="text-lg font-semibold text-[#F8FAFC]">
                 {editingProject ? 'Edit Project' : 'New Project'}
@@ -172,7 +247,8 @@ const ProjectManager = () => {
                 <X size={20} />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
               <div>
                 <label className="block text-sm font-medium text-[#94A3B8] mb-1">Project Name</label>
                 <input
@@ -184,6 +260,7 @@ const ProjectManager = () => {
                   className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                 />
               </div>
+              
               <div>
                 <label className="block text-sm font-medium text-[#94A3B8] mb-1">Description (Optional)</label>
                 <textarea
@@ -194,7 +271,32 @@ const ProjectManager = () => {
                   className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
                 />
               </div>
-              <div className="pt-4 flex justify-end gap-3">
+
+              <div>
+                <label className="block text-sm font-medium text-[#94A3B8] mb-2">Assign Team Members</label>
+                <div className="bg-[#0D1626] border border-white/5 rounded-lg max-h-40 overflow-y-auto p-2 space-y-1">
+                  {users.length === 0 ? (
+                    <div className="text-sm text-[#94A3B8] p-2">No users found.</div>
+                  ) : (
+                    users.map(u => (
+                      <label key={u._id} className="flex items-center p-2 hover:bg-[#1E293B] rounded cursor-pointer transition-colors">
+                        <input 
+                          type="checkbox" 
+                          checked={formData.assignedMembers.includes(u._id)}
+                          onChange={() => toggleUserAssignment(u._id)}
+                          className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-[#3B82F6] focus:ring-[#3B82F6] focus:ring-offset-gray-800"
+                        />
+                        <div className="ml-3">
+                          <span className="block text-sm text-[#F8FAFC]">{u.name}</span>
+                          <span className="block text-xs text-[#94A3B8]">{u.role}</span>
+                        </div>
+                      </label>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end gap-3 border-t border-[#334155] mt-4">
                 <button
                   type="button"
                   onClick={closeModal}
