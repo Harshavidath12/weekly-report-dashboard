@@ -13,7 +13,7 @@ const getProjects = asyncHandler(async (req, res) => {
 // @route   POST /api/projects
 // @access  Private/Manager
 const createProject = asyncHandler(async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, assignedMembers } = req.body;
 
   if (!name) {
     res.status(400);
@@ -29,6 +29,7 @@ const createProject = asyncHandler(async (req, res) => {
   const project = await Project.create({
     name,
     description: description || '',
+    assignedMembers: assignedMembers || [],
   });
 
   res.status(201).json(project);
@@ -69,9 +70,57 @@ const deleteProject = asyncHandler(async (req, res) => {
   res.status(200).json({ id: req.params.id });
 });
 
+// @desc    Join a project
+// @route   POST /api/projects/:id/join
+// @access  Private
+const joinProject = asyncHandler(async (req, res) => {
+  const project = await Project.findById(req.params.id);
+
+  if (!project) {
+    res.status(404);
+    throw new Error('Project not found');
+  }
+
+  if (project.assignedMembers.includes(req.user._id)) {
+    res.status(400);
+    throw new Error('You are already assigned to this project');
+  }
+
+  project.assignedMembers.push(req.user._id);
+  await project.save();
+
+  res.status(200).json(project);
+});
+
+// @desc    Leave a project
+// @route   POST /api/projects/:id/leave
+// @access  Private
+const leaveProject = asyncHandler(async (req, res) => {
+  const project = await Project.findById(req.params.id);
+
+  if (!project) {
+    res.status(404);
+    throw new Error('Project not found');
+  }
+
+  if (!project.assignedMembers.includes(req.user._id)) {
+    res.status(400);
+    throw new Error('You are not assigned to this project');
+  }
+
+  project.assignedMembers = project.assignedMembers.filter(
+    (userId) => userId.toString() !== req.user._id.toString()
+  );
+  await project.save();
+
+  res.status(200).json(project);
+});
+
 module.exports = {
   getProjects,
   createProject,
   updateProject,
   deleteProject,
+  joinProject,
+  leaveProject,
 };
