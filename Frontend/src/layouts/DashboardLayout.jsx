@@ -26,7 +26,7 @@ const DashboardLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex p-4 md:p-6 gap-6 font-sans relative overflow-hidden">
+    <div className="h-screen bg-slate-50 flex p-4 md:p-6 gap-6 font-sans relative overflow-hidden">
       {/* Ambient Corner Glows */}
       <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-br from-orange-300/40 to-transparent rounded-full blur-[120px] pointer-events-none -translate-x-1/4 -translate-y-1/4 z-0"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-orange-400/30 to-transparent rounded-full blur-[100px] pointer-events-none -translate-x-1/3 translate-y-1/3 z-0"></div>
@@ -97,7 +97,7 @@ const DashboardLayout = () => {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <Outlet />
         </main>
       </div>
