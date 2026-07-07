@@ -5,10 +5,11 @@ const {
   updateReport,
   getMyReports,
   getReportById,
+  getAllReports,
 } = require('../controllers/reportController');
-const { protect } = require('../middlewares/authMiddleware');
+const { protect, authorize } = require('../middlewares/authMiddleware');
 
-router.route('/').post(protect, createReport);
+router.route('/').post(protect, createReport).get(protect, authorize('Manager'), getAllReports);
 router.route('/me').get(protect, getMyReports);
 router.route('/:id').put(protect, updateReport).get(protect, getReportById);
 
