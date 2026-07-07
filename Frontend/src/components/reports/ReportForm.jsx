@@ -85,7 +85,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
     onSave(cleanedData);
   };
 
-  const inputClasses = "mt-1.5 block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-[15px] transition-colors";
+  const inputClasses = "mt-2 block w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 hover:border-slate-300 transition-all shadow-sm text-[15px]";
   const labelClasses = "flex items-center text-sm font-semibold text-slate-700 mb-1.5";
 
   const isReadOnly = initialData?.submissionStatus === 'submitted';
@@ -234,74 +234,81 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
       </div>
 
       <form className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className={labelClasses}>
-              <Calendar size={16} className="text-slate-400 mr-2" /> Week Start Date
-            </label>
-            <input
-              type="date"
-              name="weekStartDate"
-              value={formData.weekStartDate}
-              onChange={handleChange}
-              required
-              className={inputClasses}
-            />
-          </div>
-          <div>
-            <label className={labelClasses}>
-              <Calendar size={16} className="text-slate-400 mr-2" /> Week End Date
-            </label>
-            <input
-              type="date"
-              name="weekEndDate"
-              value={formData.weekEndDate}
-              onChange={handleChange}
-              required
-              className={inputClasses}
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className={labelClasses}>
-            <Folder size={16} className="text-slate-400 mr-2" /> Project or Category Tag
-          </label>
-          {isLoadingProjects ? (
-            <div className="flex items-center text-sm text-slate-500 h-[50px] px-4 bg-slate-50 border border-slate-200 rounded-xl">
-              <Loader2 className="animate-spin mr-2" size={16} /> Loading projects...
+        <div className="bg-slate-50/50 rounded-2xl p-6 sm:p-8 border border-slate-100">
+          <h3 className="text-base font-bold text-slate-900 mb-6 flex items-center">
+            <Folder size={18} className="text-orange-500 mr-2" /> General Details
+          </h3>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className={labelClasses}>
+                  <Calendar size={16} className="text-slate-400 mr-2" /> Week Start Date
+                </label>
+                <input
+                  type="date"
+                  name="weekStartDate"
+                  value={formData.weekStartDate}
+                  onChange={handleChange}
+                  required
+                  className={inputClasses}
+                />
+              </div>
+              <div>
+                <label className={labelClasses}>
+                  <Calendar size={16} className="text-slate-400 mr-2" /> Week End Date
+                </label>
+                <input
+                  type="date"
+                  name="weekEndDate"
+                  value={formData.weekEndDate}
+                  onChange={handleChange}
+                  required
+                  className={inputClasses}
+                />
+              </div>
             </div>
-          ) : (
-            <select
-              name="project"
-              value={formData.project}
-              onChange={handleChange}
-              required
-              className={inputClasses}
-            >
-              <option value="" disabled>Select a project</option>
-              
-              <optgroup label="My Assigned Projects">
-                {projects.filter(p => p.assignedMembers?.includes(user?._id)).map((proj) => (
-                  <option key={proj._id} value={proj._id}>
-                    {proj.name}
-                  </option>
-                ))}
-              </optgroup>
-              
-              <optgroup label="Other Projects">
-                {projects.filter(p => !p.assignedMembers?.includes(user?._id)).map((proj) => (
-                  <option key={proj._id} value={proj._id}>
-                    {proj.name}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
-          )}
+
+            <div>
+              <label className={labelClasses}>
+                <Folder size={16} className="text-slate-400 mr-2" /> Project or Category Tag
+              </label>
+              {isLoadingProjects ? (
+                <div className="flex items-center text-sm text-slate-500 h-[50px] px-4 bg-white border border-slate-200 rounded-xl">
+                  <Loader2 className="animate-spin mr-2" size={16} /> Loading projects...
+                </div>
+              ) : (
+                <select
+                  name="project"
+                  value={formData.project}
+                  onChange={handleChange}
+                  required
+                  className={inputClasses}
+                >
+                  <option value="" disabled>Select a project</option>
+                  
+                  <optgroup label="My Assigned Projects">
+                    {projects.filter(p => p.assignedMembers?.includes(user?._id)).map((proj) => (
+                      <option key={proj._id} value={proj._id}>
+                        {proj.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                  
+                  <optgroup label="Other Projects">
+                    {projects.filter(p => !p.assignedMembers?.includes(user?._id)).map((proj) => (
+                      <option key={proj._id} value={proj._id}>
+                        {proj.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                </select>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Tasks Completed */}
-        <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+        <div className="bg-slate-50/50 rounded-2xl p-6 sm:p-8 border border-slate-100">
           <label className={`${labelClasses} text-base mb-4`}>
             <CheckSquare size={18} className="text-slate-400 mr-2" /> Tasks Completed
           </label>
@@ -329,14 +336,14 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
           <button
             type="button"
             onClick={() => addTask('tasksCompleted')}
-            className="mt-4 flex items-center text-[15px] text-orange-600 hover:text-orange-700 font-medium transition-colors"
+            className="mt-5 flex items-center text-[14px] text-slate-600 hover:text-orange-700 hover:bg-orange-50 border border-transparent hover:border-orange-200 px-3 py-2 rounded-xl font-semibold transition-all"
           >
             <Plus size={16} className="mr-1.5" /> Add another task
           </button>
         </div>
 
         {/* Tasks Planned */}
-        <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+        <div className="bg-slate-50/50 rounded-2xl p-6 sm:p-8 border border-slate-100">
           <label className={`${labelClasses} text-base mb-4`}>
             <ListTodo size={18} className="text-slate-400 mr-2" /> Tasks Planned for Next Week
           </label>
@@ -364,64 +371,71 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
           <button
             type="button"
             onClick={() => addTask('tasksPlanned')}
-            className="mt-4 flex items-center text-[15px] text-orange-600 hover:text-orange-700 font-medium transition-colors"
+            className="mt-5 flex items-center text-[14px] text-slate-600 hover:text-orange-700 hover:bg-orange-50 border border-transparent hover:border-orange-200 px-3 py-2 rounded-xl font-semibold transition-all"
           >
             <Plus size={16} className="mr-1.5" /> Add another task
           </button>
         </div>
 
-        <div>
-          <label className={labelClasses}>
-            <AlertCircle size={16} className="text-slate-400 mr-2" /> Blockers / Challenges
-          </label>
-          <textarea
-            name="blockers"
-            value={formData.blockers}
-            onChange={handleChange}
-            placeholder="Any issues preventing progress?"
-            rows={3}
-            className={inputClasses}
-          />
-        </div>
+        <div className="bg-slate-50/50 rounded-2xl p-6 sm:p-8 border border-slate-100">
+          <h3 className="text-base font-bold text-slate-900 mb-6 flex items-center">
+            <AlertCircle size={18} className="text-orange-500 mr-2" /> Additional Details
+          </h3>
+          <div className="space-y-6">
+            <div>
+              <label className={labelClasses}>
+                <AlertCircle size={16} className="text-slate-400 mr-2" /> Blockers / Challenges
+              </label>
+              <textarea
+                name="blockers"
+                value={formData.blockers}
+                onChange={handleChange}
+                placeholder="Any issues preventing progress?"
+                rows={3}
+                className={inputClasses}
+              />
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className={labelClasses}>
-              <Clock size={16} className="text-slate-400 mr-2" /> Hours Worked (Optional)
-            </label>
-            <input
-              type="number"
-              name="hoursWorked"
-              value={formData.hoursWorked}
-              onChange={handleChange}
-              placeholder="e.g. 40"
-              min="0"
-              max="168"
-              className={inputClasses}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className={labelClasses}>
+                  <Clock size={16} className="text-slate-400 mr-2" /> Hours Worked (Optional)
+                </label>
+                <input
+                  type="number"
+                  name="hoursWorked"
+                  value={formData.hoursWorked}
+                  onChange={handleChange}
+                  placeholder="e.g. 40"
+                  min="0"
+                  max="168"
+                  className={inputClasses}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className={labelClasses}>
+                <LinkIcon size={16} className="text-slate-400 mr-2" /> Notes or Links (Optional)
+              </label>
+              <textarea
+                name="notesOrLinks"
+                value={formData.notesOrLinks}
+                onChange={handleChange}
+                placeholder="Links to PRs, documents, or general notes"
+                rows={2}
+                className={inputClasses}
+              />
+            </div>
           </div>
         </div>
 
-        <div>
-          <label className={labelClasses}>
-            <LinkIcon size={16} className="text-slate-400 mr-2" /> Notes or Links (Optional)
-          </label>
-          <textarea
-            name="notesOrLinks"
-            value={formData.notesOrLinks}
-            onChange={handleChange}
-            placeholder="Links to PRs, documents, or general notes"
-            rows={2}
-            className={inputClasses}
-          />
-        </div>
-
-        <div className="pt-8 mt-8 flex items-center justify-end gap-4 border-t border-slate-100">
+        <div className="pt-4 flex items-center justify-end gap-4">
           <button
             type="button"
             onClick={(e) => handleSubmit(e, 'draft')}
             disabled={isSaving}
-            className="flex items-center px-5 py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 font-medium shadow-sm"
+            className="flex items-center px-5 py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all disabled:opacity-50 font-semibold shadow-sm"
           >
             <Save size={18} className="mr-2 text-slate-400" />
             Save Draft
@@ -430,7 +444,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
             type="button"
             onClick={(e) => handleSubmit(e, 'submitted')}
             disabled={isSaving}
-            className="flex items-center px-6 py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 shadow-sm transition-all disabled:opacity-50 font-medium"
+            className="flex items-center px-6 py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 shadow-sm transition-all disabled:opacity-50 font-semibold hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
           >
             <Send size={18} className="mr-2" />
             Submit Report
