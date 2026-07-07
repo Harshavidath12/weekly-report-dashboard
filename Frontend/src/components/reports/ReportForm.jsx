@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, X, Save, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import { Plus, X, Save, Send, CheckCircle2, Loader2, Calendar, Folder, Clock, CheckSquare, ListTodo, AlertCircle, Link as LinkIcon, FileText } from 'lucide-react';
 import projectService from '../../services/projectService';
 import { useAuth } from '../../context/AuthContext';
 
@@ -85,42 +85,178 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
     onSave(cleanedData);
   };
 
-  const inputClasses = "mt-1 block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-[15px] sm:text-[15px] transition-colors";
-  const labelClasses = "block text-sm font-semibold text-slate-700 mb-1.5";
+  const inputClasses = "mt-1.5 block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-[15px] transition-colors";
+  const labelClasses = "flex items-center text-sm font-semibold text-slate-700 mb-1.5";
 
   const isReadOnly = initialData?.submissionStatus === 'submitted';
 
-  return (
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-      {isReadOnly && (
-        <div className="mb-6 p-4 bg-green-50 text-green-700 border border-green-200/60 rounded-xl text-sm flex items-center">
-          <CheckCircle2 size={18} className="mr-2" />
-          This report has been submitted and is read-only.
-        </div>
-      )}
+  // Find the selected project object for display in read-only view
+  const selectedProjectObj = projects.find(p => p._id === formData.project);
+  const projectName = selectedProjectObj ? selectedProjectObj.name : 'Unknown Project';
 
-      <form className="space-y-6">
+  if (isReadOnly) {
+    return (
+      <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 max-w-4xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-100 pb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+              <FileText className="text-orange-500" size={24} />
+              Weekly Report
+            </h2>
+          </div>
+          <span className="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full text-sm font-medium flex items-center shadow-sm">
+            <CheckCircle2 size={16} className="mr-1.5" />
+            Submitted and Locked
+          </span>
+        </div>
+
+        {/* Metadata Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+            <div className="flex items-center text-slate-500 text-sm font-medium mb-2">
+              <Calendar size={16} className="mr-2" /> Dates
+            </div>
+            <div className="text-slate-900 font-semibold">
+              {formData.weekStartDate} <span className="text-slate-400 mx-1">to</span> {formData.weekEndDate}
+            </div>
+          </div>
+          
+          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+            <div className="flex items-center text-slate-500 text-sm font-medium mb-2">
+              <Folder size={16} className="mr-2" /> Project
+            </div>
+            <div className="text-slate-900 font-semibold truncate" title={projectName}>
+              {projectName}
+            </div>
+          </div>
+
+          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+            <div className="flex items-center text-slate-500 text-sm font-medium mb-2">
+              <Clock size={16} className="mr-2" /> Hours Worked
+            </div>
+            <div className="text-slate-900 font-semibold">
+              {formData.hoursWorked ? `${formData.hoursWorked} hrs` : 'N/A'}
+            </div>
+          </div>
+        </div>
+
+        {/* Tasks Completed */}
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
+            <CheckSquare className="text-orange-500 mr-2" size={20} />
+            Tasks Completed
+          </h3>
+          {formData.tasksCompleted.length > 0 && formData.tasksCompleted[0] !== '' ? (
+            <div className="space-y-3">
+              {formData.tasksCompleted.map((task, index) => (
+                <div key={index} className="bg-white border border-slate-100 p-4 rounded-xl shadow-sm flex items-start gap-3">
+                  <div className="mt-0.5 bg-green-50 p-1 rounded text-green-600 shrink-0">
+                    <CheckCircle2 size={16} />
+                  </div>
+                  <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">{task}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-slate-500 italic">No tasks completed recorded.</p>
+          )}
+        </div>
+
+        {/* Tasks Planned */}
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center">
+            <ListTodo className="text-orange-500 mr-2" size={20} />
+            Planned for Next Week
+          </h3>
+          {formData.tasksPlanned.length > 0 && formData.tasksPlanned[0] !== '' ? (
+            <div className="space-y-3">
+              {formData.tasksPlanned.map((task, index) => (
+                <div key={index} className="bg-white border border-slate-100 p-4 rounded-xl shadow-sm flex items-start gap-3">
+                  <div className="mt-0.5 bg-orange-50 p-1 rounded text-orange-600 shrink-0">
+                    <CheckSquare size={16} />
+                  </div>
+                  <p className="text-slate-800 leading-relaxed whitespace-pre-wrap">{task}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-slate-500 italic">No tasks planned recorded.</p>
+          )}
+        </div>
+
+        {/* Blockers & Notes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center">
+              <AlertCircle className="text-red-500 mr-2" size={16} />
+              Blockers / Challenges
+            </h3>
+            {formData.blockers ? (
+              <div className="bg-red-50/50 border border-red-100 p-4 rounded-xl text-slate-800 leading-relaxed text-[15px]">
+                {formData.blockers}
+              </div>
+            ) : (
+              <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl text-slate-500 italic text-[15px]">
+                None reported.
+              </div>
+            )}
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-slate-900 mb-3 flex items-center">
+              <LinkIcon className="text-blue-500 mr-2" size={16} />
+              Notes & Links
+            </h3>
+            {formData.notesOrLinks ? (
+              <div className="bg-blue-50/30 border border-blue-100 p-4 rounded-xl text-slate-800 leading-relaxed text-[15px] break-words">
+                {formData.notesOrLinks}
+              </div>
+            ) : (
+              <div className="bg-slate-50 border border-slate-100 p-4 rounded-xl text-slate-500 italic text-[15px]">
+                No additional notes.
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Editable Form View
+  return (
+    <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 max-w-4xl mx-auto">
+      <div className="mb-8 border-b border-slate-100 pb-6">
+        <h2 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <FileText className="text-orange-500" size={24} />
+          {initialData ? 'Edit Weekly Report' : 'Draft New Report'}
+        </h2>
+        <p className="text-slate-500 mt-1">Fill out the details below to log your progress.</p>
+      </div>
+
+      <form className="space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className={labelClasses}>Week Start Date</label>
+            <label className={labelClasses}>
+              <Calendar size={16} className="text-slate-400 mr-2" /> Week Start Date
+            </label>
             <input
               type="date"
               name="weekStartDate"
               value={formData.weekStartDate}
               onChange={handleChange}
-              disabled={isReadOnly}
               required
               className={inputClasses}
             />
           </div>
           <div>
-            <label className={labelClasses}>Week End Date</label>
+            <label className={labelClasses}>
+              <Calendar size={16} className="text-slate-400 mr-2" /> Week End Date
+            </label>
             <input
               type="date"
               name="weekEndDate"
               value={formData.weekEndDate}
               onChange={handleChange}
-              disabled={isReadOnly}
               required
               className={inputClasses}
             />
@@ -128,9 +264,11 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
         </div>
 
         <div>
-          <label className={labelClasses}>Project or Category Tag</label>
+          <label className={labelClasses}>
+            <Folder size={16} className="text-slate-400 mr-2" /> Project or Category Tag
+          </label>
           {isLoadingProjects ? (
-            <div className="flex items-center text-sm text-slate-500 h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl">
+            <div className="flex items-center text-sm text-slate-500 h-[50px] px-4 bg-slate-50 border border-slate-200 rounded-xl">
               <Loader2 className="animate-spin mr-2" size={16} /> Loading projects...
             </div>
           ) : (
@@ -138,7 +276,6 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
               name="project"
               value={formData.project}
               onChange={handleChange}
-              disabled={isReadOnly}
               required
               className={inputClasses}
             >
@@ -164,87 +301,84 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
         </div>
 
         {/* Tasks Completed */}
-        <div>
-          <label className={labelClasses}>Tasks Completed</label>
+        <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+          <label className={`${labelClasses} text-base mb-4`}>
+            <CheckSquare size={18} className="text-slate-400 mr-2" /> Tasks Completed
+          </label>
           <div className="space-y-3">
             {formData.tasksCompleted.map((task, index) => (
-              <div key={index} className="flex items-start gap-2">
+              <div key={index} className="flex items-start gap-2 relative group">
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={task}
                   onChange={(e) => handleTaskChange(index, e.target.value, 'tasksCompleted')}
                   placeholder="What did you accomplish?"
-                  disabled={isReadOnly}
-                  className={`${inputClasses} mt-0 block w-full whitespace-normal break-words ${isReadOnly ? 'resize-none' : 'resize-y'}`}
+                  className={`${inputClasses} mt-0 resize-y`}
                 />
-                {!isReadOnly && (
-                  <button
-                    type="button"
-                    onClick={() => removeTask(index, 'tasksCompleted')}
-                    className="p-2.5 mt-1 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-xl transition-colors"
-                  >
-                    <X size={18} />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => removeTask(index, 'tasksCompleted')}
+                  className="absolute right-2 top-2 p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                  title="Remove Task"
+                >
+                  <X size={16} />
+                </button>
               </div>
             ))}
           </div>
-          {!isReadOnly && (
-            <button
-              type="button"
-              onClick={() => addTask('tasksCompleted')}
-              className="mt-3 flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium"
-            >
-              <Plus size={16} className="mr-1" /> Add Task
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => addTask('tasksCompleted')}
+            className="mt-4 flex items-center text-[15px] text-orange-600 hover:text-orange-700 font-medium transition-colors"
+          >
+            <Plus size={16} className="mr-1.5" /> Add another task
+          </button>
         </div>
 
         {/* Tasks Planned */}
-        <div>
-          <label className={labelClasses}>Tasks Planned for Next Week</label>
+        <div className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+          <label className={`${labelClasses} text-base mb-4`}>
+            <ListTodo size={18} className="text-slate-400 mr-2" /> Tasks Planned for Next Week
+          </label>
           <div className="space-y-3">
             {formData.tasksPlanned.map((task, index) => (
-              <div key={index} className="flex items-start gap-2">
+              <div key={index} className="flex items-start gap-2 relative group">
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={task}
                   onChange={(e) => handleTaskChange(index, e.target.value, 'tasksPlanned')}
                   placeholder="What are you planning to do?"
-                  disabled={isReadOnly}
-                  className={`${inputClasses} mt-0 block w-full whitespace-normal break-words ${isReadOnly ? 'resize-none' : 'resize-y'}`}
+                  className={`${inputClasses} mt-0 resize-y`}
                 />
-                {!isReadOnly && (
-                  <button
-                    type="button"
-                    onClick={() => removeTask(index, 'tasksPlanned')}
-                    className="p-2.5 mt-1 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-xl transition-colors"
-                  >
-                    <X size={18} />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => removeTask(index, 'tasksPlanned')}
+                  className="absolute right-2 top-2 p-1.5 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                  title="Remove Task"
+                >
+                  <X size={16} />
+                </button>
               </div>
             ))}
           </div>
-          {!isReadOnly && (
-            <button
-              type="button"
-              onClick={() => addTask('tasksPlanned')}
-              className="mt-3 flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium"
-            >
-              <Plus size={16} className="mr-1" /> Add Task
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={() => addTask('tasksPlanned')}
+            className="mt-4 flex items-center text-[15px] text-orange-600 hover:text-orange-700 font-medium transition-colors"
+          >
+            <Plus size={16} className="mr-1.5" /> Add another task
+          </button>
         </div>
 
         <div>
-          <label className={labelClasses}>Blockers / Challenges</label>
+          <label className={labelClasses}>
+            <AlertCircle size={16} className="text-slate-400 mr-2" /> Blockers / Challenges
+          </label>
           <textarea
             name="blockers"
             value={formData.blockers}
             onChange={handleChange}
             placeholder="Any issues preventing progress?"
-            disabled={isReadOnly}
             rows={3}
             className={inputClasses}
           />
@@ -252,14 +386,15 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className={labelClasses}>Hours Worked (Optional)</label>
+            <label className={labelClasses}>
+              <Clock size={16} className="text-slate-400 mr-2" /> Hours Worked (Optional)
+            </label>
             <input
               type="number"
               name="hoursWorked"
               value={formData.hoursWorked}
               onChange={handleChange}
               placeholder="e.g. 40"
-              disabled={isReadOnly}
               min="0"
               max="168"
               className={inputClasses}
@@ -268,40 +403,39 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
         </div>
 
         <div>
-          <label className={labelClasses}>Notes or Links (Optional)</label>
+          <label className={labelClasses}>
+            <LinkIcon size={16} className="text-slate-400 mr-2" /> Notes or Links (Optional)
+          </label>
           <textarea
             name="notesOrLinks"
             value={formData.notesOrLinks}
             onChange={handleChange}
             placeholder="Links to PRs, documents, or general notes"
-            disabled={isReadOnly}
             rows={2}
             className={inputClasses}
           />
         </div>
 
-        {!isReadOnly && (
-          <div className="pt-6 flex items-center justify-end gap-4 border-t border-slate-100">
-            <button
-              type="button"
-              onClick={(e) => handleSubmit(e, 'draft')}
-              disabled={isSaving}
-              className="flex items-center px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 font-medium"
-            >
-              <Save size={18} className="mr-2 text-slate-400" />
-              Save Draft
-            </button>
-            <button
-              type="button"
-              onClick={(e) => handleSubmit(e, 'submitted')}
-              disabled={isSaving}
-              className="flex items-center px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-sm transition-all disabled:opacity-50 font-medium"
-            >
-              <Send size={18} className="mr-2" />
-              Submit Report
-            </button>
-          </div>
-        )}
+        <div className="pt-8 mt-8 flex items-center justify-end gap-4 border-t border-slate-100">
+          <button
+            type="button"
+            onClick={(e) => handleSubmit(e, 'draft')}
+            disabled={isSaving}
+            className="flex items-center px-5 py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50 font-medium shadow-sm"
+          >
+            <Save size={18} className="mr-2 text-slate-400" />
+            Save Draft
+          </button>
+          <button
+            type="button"
+            onClick={(e) => handleSubmit(e, 'submitted')}
+            disabled={isSaving}
+            className="flex items-center px-6 py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 shadow-sm transition-all disabled:opacity-50 font-medium"
+          >
+            <Send size={18} className="mr-2" />
+            Submit Report
+          </button>
+        </div>
       </form>
     </div>
   );
