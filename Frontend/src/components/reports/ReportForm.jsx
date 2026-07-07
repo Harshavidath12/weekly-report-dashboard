@@ -85,15 +85,15 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
     onSave(cleanedData);
   };
 
-  const inputClasses = "mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:border-[#3B82F6] sm:text-sm transition-colors";
-  const labelClasses = "block text-sm font-medium text-[#94A3B8] mb-1";
+  const inputClasses = "mt-1 block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-[15px] sm:text-[15px] transition-colors";
+  const labelClasses = "block text-sm font-semibold text-slate-700 mb-1.5";
 
   const isReadOnly = initialData?.submissionStatus === 'submitted';
 
   return (
-    <div className="bg-[#1E293B] p-6 rounded-xl shadow-lg border border-[#334155]">
+    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
       {isReadOnly && (
-        <div className="mb-6 p-4 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm flex items-center">
+        <div className="mb-6 p-4 bg-green-50 text-green-700 border border-green-200/60 rounded-xl text-sm flex items-center">
           <CheckCircle2 size={18} className="mr-2" />
           This report has been submitted and is read-only.
         </div>
@@ -130,7 +130,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
         <div>
           <label className={labelClasses}>Project or Category Tag</label>
           {isLoadingProjects ? (
-            <div className="flex items-center text-sm text-[#94A3B8] h-11 px-4 bg-[#0D1626] border border-white/5 rounded-lg shadow-sm">
+            <div className="flex items-center text-sm text-slate-500 h-11 px-4 bg-slate-50 border border-slate-200 rounded-xl">
               <Loader2 className="animate-spin mr-2" size={16} /> Loading projects...
             </div>
           ) : (
@@ -168,20 +168,20 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
           <label className={labelClasses}>Tasks Completed</label>
           <div className="space-y-3">
             {formData.tasksCompleted.map((task, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <input
-                  type="text"
+              <div key={index} className="flex items-start gap-2">
+                <textarea
+                  rows={3}
                   value={task}
                   onChange={(e) => handleTaskChange(index, e.target.value, 'tasksCompleted')}
                   placeholder="What did you accomplish?"
                   disabled={isReadOnly}
-                  className={inputClasses + " mt-0"}
+                  className={`${inputClasses} mt-0 block w-full whitespace-normal break-words ${isReadOnly ? 'resize-none' : 'resize-y'}`}
                 />
                 {!isReadOnly && (
                   <button
                     type="button"
                     onClick={() => removeTask(index, 'tasksCompleted')}
-                    className="p-2.5 text-slate-500 hover:text-red-400 hover:bg-white/5 rounded-lg transition-colors"
+                    className="p-2.5 mt-1 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-xl transition-colors"
                   >
                     <X size={18} />
                   </button>
@@ -193,7 +193,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
             <button
               type="button"
               onClick={() => addTask('tasksCompleted')}
-              className="mt-3 flex items-center text-sm text-[#3B82F6] hover:text-[#60A5FA] font-medium"
+              className="mt-3 flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium"
             >
               <Plus size={16} className="mr-1" /> Add Task
             </button>
@@ -205,20 +205,20 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
           <label className={labelClasses}>Tasks Planned for Next Week</label>
           <div className="space-y-3">
             {formData.tasksPlanned.map((task, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <input
-                  type="text"
+              <div key={index} className="flex items-start gap-2">
+                <textarea
+                  rows={3}
                   value={task}
                   onChange={(e) => handleTaskChange(index, e.target.value, 'tasksPlanned')}
                   placeholder="What are you planning to do?"
                   disabled={isReadOnly}
-                  className={inputClasses + " mt-0"}
+                  className={`${inputClasses} mt-0 block w-full whitespace-normal break-words ${isReadOnly ? 'resize-none' : 'resize-y'}`}
                 />
                 {!isReadOnly && (
                   <button
                     type="button"
                     onClick={() => removeTask(index, 'tasksPlanned')}
-                    className="p-2.5 text-slate-500 hover:text-red-400 hover:bg-white/5 rounded-lg transition-colors"
+                    className="p-2.5 mt-1 text-slate-400 hover:text-red-500 hover:bg-slate-100 rounded-xl transition-colors"
                   >
                     <X size={18} />
                   </button>
@@ -230,7 +230,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
             <button
               type="button"
               onClick={() => addTask('tasksPlanned')}
-              className="mt-3 flex items-center text-sm text-[#3B82F6] hover:text-[#60A5FA] font-medium"
+              className="mt-3 flex items-center text-sm text-orange-600 hover:text-orange-700 font-medium"
             >
               <Plus size={16} className="mr-1" /> Add Task
             </button>
@@ -281,21 +281,21 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
         </div>
 
         {!isReadOnly && (
-          <div className="pt-6 flex items-center justify-end gap-4 border-t border-[#334155]">
+          <div className="pt-6 flex items-center justify-end gap-4 border-t border-slate-100">
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'draft')}
               disabled={isSaving}
-              className="flex items-center px-4 py-2 bg-[#1E293B] text-[#F8FAFC] border border-[#334155] rounded-lg hover:bg-white/5 transition-colors disabled:opacity-50 font-medium"
+              className="flex items-center px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 font-medium"
             >
-              <Save size={18} className="mr-2 text-[#94A3B8]" />
+              <Save size={18} className="mr-2 text-slate-400" />
               Save Draft
             </button>
             <button
               type="button"
               onClick={(e) => handleSubmit(e, 'submitted')}
               disabled={isSaving}
-              className="flex items-center px-6 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#3B82F6] shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-all disabled:opacity-50 font-medium"
+              className="flex items-center px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-sm transition-all disabled:opacity-50 font-medium"
             >
               <Send size={18} className="mr-2" />
               Submit Report
