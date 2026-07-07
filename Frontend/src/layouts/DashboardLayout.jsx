@@ -28,7 +28,7 @@ const DashboardLayout = () => {
   return (
     <div className="min-h-screen bg-[#fcfaf9] flex p-4 md:p-6 gap-6 font-sans">
       {/* Sidebar - Floating Card */}
-      <aside className="w-64 bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between overflow-hidden shrink-0 border border-gray-100">
+      <aside className="w-64 bg-white rounded-[2rem] shadow-lg shadow-slate-200/50 flex flex-col justify-between overflow-hidden shrink-0 border border-slate-100">
         <div>
           {/* Logo Section */}
           <div className="p-8 pb-4 flex flex-col items-center justify-center">
@@ -43,7 +43,7 @@ const DashboardLayout = () => {
                 to="/dashboard" 
                 end
                 className={({ isActive }) => 
-                  `flex items-center gap-4 px-6 py-3.5 rounded-[1.5rem] font-semibold text-[15px] transition-all duration-300 ${isActive ? 'bg-[#f04f45] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'}`
+                  `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-orange-50 border-orange-600 text-orange-600' : 'border-transparent text-slate-500 hover:bg-slate-100/80 hover:text-slate-900'}`
                 }
               >
                 <LayoutDashboard size={18} /> Team Dashboard
@@ -52,7 +52,7 @@ const DashboardLayout = () => {
             <NavLink 
               to="/dashboard/projects" 
               className={({ isActive }) => 
-                `flex items-center gap-4 px-6 py-3.5 rounded-[1.5rem] font-semibold text-[15px] transition-all duration-300 ${isActive ? 'bg-[#f04f45] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'}`
+                `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-orange-50 border-orange-600 text-orange-600' : 'border-transparent text-slate-500 hover:bg-slate-100/80 hover:text-slate-900'}`
               }
             >
               <Folder size={18} /> {user.role === 'Manager' ? 'Manage Projects' : 'Projects'}
@@ -60,7 +60,7 @@ const DashboardLayout = () => {
             <NavLink 
               to="/dashboard/personal" 
               className={({ isActive }) => 
-                `flex items-center gap-4 px-6 py-3.5 rounded-[1.5rem] font-semibold text-[15px] transition-all duration-300 ${isActive ? 'bg-[#f04f45] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'}`
+                `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-orange-50 border-orange-600 text-orange-600' : 'border-transparent text-slate-500 hover:bg-slate-100/80 hover:text-slate-900'}`
               }
             >
               <FileText size={18} /> My Reports
