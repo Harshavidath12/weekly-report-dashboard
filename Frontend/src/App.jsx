@@ -1,9 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import AuthLayout from './layouts/AuthLayout';
 import DashboardLayout from './layouts/DashboardLayout';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
+import Auth from './pages/auth/Auth';
 import ManagerDashboard from './pages/dashboard/ManagerDashboard';
 import PersonalReport from './pages/dashboard/PersonalReport';
 import ProjectManager from './pages/dashboard/ProjectManager';
@@ -13,10 +11,9 @@ function App() {
     <AuthProvider>
       <Routes>
         {/* Auth Routes */}
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Route>
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/login" element={<Navigate to="/auth?action=login" replace />} />
+        <Route path="/register" element={<Navigate to="/auth?action=register" replace />} />
 
         {/* Dashboard Routes */}
         <Route path="/dashboard" element={<DashboardLayout />}>
