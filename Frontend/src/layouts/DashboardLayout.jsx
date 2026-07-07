@@ -88,8 +88,8 @@ const DashboardLayout = () => {
         {/* Top Header */}
         <header className="h-24 flex items-center justify-end px-4 shrink-0">
           {/* Profile Button */}
-          <div className="flex items-center gap-3 pl-5 pr-2 py-2 bg-white rounded-full border border-[#f04f45] shadow-sm cursor-default">
-            <span className="text-gray-800 font-semibold text-[14px]">{getFormattedName(user.name)}</span>
+          <div className="flex items-center gap-3 pl-5 pr-2 py-2 bg-white rounded-full border border-[#f04f45] shadow-sm cursor-pointer hover:bg-[#f04f45] transition-all duration-300 group">
+            <span className="text-gray-800 font-bold text-[16px] group-hover:text-white transition-colors">{getFormattedName(user.name)}</span>
             <div className="w-9 h-9 rounded-full bg-[#f4f7fe] flex items-center justify-center overflow-hidden border border-gray-100">
               <User size={18} className="text-gray-600" />
             </div>
