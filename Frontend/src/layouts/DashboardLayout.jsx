@@ -1,12 +1,13 @@
-import { Outlet, Navigate, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { LogOut, LayoutDashboard, FileText, Folder } from 'lucide-react';
+import { LogOut, LayoutDashboard, FileText, Folder, User } from 'lucide-react';
+import iconImage from '../assets/icon.png';
 
 const DashboardLayout = () => {
   const { user, logout, loading } = useAuth();
   const navigate = useNavigate();
 
-  if (loading) return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  if (loading) return <div className="flex h-screen items-center justify-center bg-[#fcfaf9]">Loading...</div>;
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -17,52 +18,81 @@ const DashboardLayout = () => {
     navigate('/login');
   };
 
+  const getFormattedName = (fullName) => {
+    if (!fullName) return '';
+    const parts = fullName.trim().split(' ');
+    if (parts.length === 1) return parts[0].toLowerCase();
+    return `${parts[0].toLowerCase()}.${parts[1][0].toLowerCase()}`;
+  };
+
   return (
-    <div className="min-h-screen bg-[#0F172A] flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-[#0B1120] text-[#F8FAFC] flex flex-col border-r border-[#334155]">
-        <div className="p-4 flex items-center gap-3 border-b border-[#334155]">
-          <div className="w-8 h-8 bg-[#3B82F6] rounded flex items-center justify-center shadow-lg shadow-blue-500/40">
-            <span className="text-white font-bold">W</span>
+    <div className="min-h-screen bg-[#fcfaf9] flex p-4 md:p-6 gap-6 font-sans">
+      {/* Sidebar - Floating Card */}
+      <aside className="w-64 bg-white rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col justify-between overflow-hidden shrink-0 border border-gray-100">
+        <div>
+          {/* Logo Section */}
+          <div className="p-8 pb-4 flex flex-col items-center justify-center">
+            <img src={iconImage} alt="Logo" className="w-20 h-20 object-contain mb-3 drop-shadow-sm" />
+            <h1 className="text-xl font-bold tracking-tight text-gray-800">TeamReports</h1>
           </div>
-          <h1 className="text-xl font-bold tracking-tight">TeamReports</h1>
+          
+          {/* Nav Links */}
+          <nav className="px-5 mt-6 space-y-2">
+            {user.role === 'Manager' && (
+              <NavLink 
+                to="/dashboard" 
+                end
+                className={({ isActive }) => 
+                  `flex items-center gap-4 px-6 py-3.5 rounded-[1.5rem] font-semibold text-[15px] transition-all duration-300 ${isActive ? 'bg-[#f04f45] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'}`
+                }
+              >
+                <LayoutDashboard size={18} /> Team Dashboard
+              </NavLink>
+            )}
+            <NavLink 
+              to="/dashboard/projects" 
+              className={({ isActive }) => 
+                `flex items-center gap-4 px-6 py-3.5 rounded-[1.5rem] font-semibold text-[15px] transition-all duration-300 ${isActive ? 'bg-[#f04f45] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'}`
+              }
+            >
+              <Folder size={18} /> {user.role === 'Manager' ? 'Manage Projects' : 'Projects'}
+            </NavLink>
+            <NavLink 
+              to="/dashboard/personal" 
+              className={({ isActive }) => 
+                `flex items-center gap-4 px-6 py-3.5 rounded-[1.5rem] font-semibold text-[15px] transition-all duration-300 ${isActive ? 'bg-[#f04f45] text-white shadow-lg shadow-red-500/20' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'}`
+              }
+            >
+              <FileText size={18} /> My Reports
+            </NavLink>
+          </nav>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
-          {user.role === 'Manager' && (
-            <Link to="/dashboard" className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#1E293B] transition-colors">
-              <LayoutDashboard size={20} className="text-[#94A3B8]" /> Team Dashboard
-            </Link>
-          )}
-          <Link to="/dashboard/projects" className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#1E293B] transition-colors">
-            <Folder size={20} className="text-[#94A3B8]" /> {user.role === 'Manager' ? 'Manage Projects' : 'Projects'}
-          </Link>
-          <Link to="/dashboard/personal" className="flex items-center gap-3 p-3 rounded-lg hover:bg-[#1E293B] transition-colors">
-            <FileText size={20} className="text-[#94A3B8]" /> My Reports
-          </Link>
-        </nav>
-        <div className="p-4 border-t border-[#334155]">
-          <div className="mb-4">
-            <p className="text-sm text-[#94A3B8]">Logged in as:</p>
-            <p className="font-semibold text-[#F8FAFC]">{user.name}</p>
-            <p className="text-xs text-[#3B82F6] capitalize font-medium">{user.role}</p>
-          </div>
+
+        <div className="p-6">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 p-2 bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white rounded-lg transition-colors"
+            className="w-full flex items-center justify-center gap-2 p-3 text-gray-400 hover:text-[#f04f45] hover:bg-red-50 rounded-[1.5rem] font-semibold text-[15px] transition-colors"
           >
-            <LogOut size={18} /> Logout
+            Logout <LogOut size={16} />
           </button>
         </div>
-      </div>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-[#111827] shadow-sm border-b border-[#334155] h-16 flex items-center px-6">
-          <h2 className="text-xl font-semibold text-[#F8FAFC]">
-            {user.role === 'Manager' ? 'Manager Overview' : 'Team Member Dashboard'}
-          </h2>
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Header */}
+        <header className="h-24 flex items-center justify-end px-4 shrink-0">
+          {/* Profile Button */}
+          <div className="flex items-center gap-3 pl-5 pr-2 py-2 bg-white rounded-full border border-[#f04f45] shadow-sm cursor-default">
+            <span className="text-gray-800 font-semibold text-[14px]">{getFormattedName(user.name)}</span>
+            <div className="w-9 h-9 rounded-full bg-[#f4f7fe] flex items-center justify-center overflow-hidden border border-gray-100">
+               <User size={18} className="text-gray-600" />
+            </div>
+          </div>
         </header>
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#0F172A] p-6">
+
+        {/* Page Content */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto">
           <Outlet />
         </main>
       </div>
