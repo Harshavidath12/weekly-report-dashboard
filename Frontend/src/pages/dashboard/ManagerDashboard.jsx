@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 import reportService from '../../services/reportService';
 import userService from '../../services/userService';
 import projectService from '../../services/projectService';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, LayoutDashboard, Filter, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
 
 const CustomDropdown = ({ value, onChange, options, defaultLabel }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,22 +25,22 @@ const CustomDropdown = ({ value, onChange, options, defaultLabel }) => {
   const displayLabel = selectedOption ? selectedOption.label : defaultLabel;
 
   return (
-    <div className="relative w-full" ref={dropdownRef}>
+    <div className="relative min-w-[140px]" ref={dropdownRef}>
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all flex justify-between items-center cursor-pointer"
+        className={`px-4 py-2 bg-white border ${value ? 'border-[#FF6B35]' : 'border-slate-200'} rounded-full text-[13px] font-medium text-slate-700 hover:border-[#FF6B35] transition-all flex justify-between items-center cursor-pointer shadow-sm`}
         tabIndex={0}
         onKeyDown={(e) => { if (e.key === 'Enter') setIsOpen(!isOpen); }}
       >
-        <span className="truncate">{displayLabel}</span>
-        <ChevronDown size={16} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="truncate mr-2">{displayLabel}</span>
+        <ChevronDown size={14} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </div>
       
       {isOpen && (
-        <div className="absolute z-50 w-full mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-lg overflow-hidden py-1 max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-xl shadow-lg overflow-hidden py-1 max-h-60 overflow-y-auto">
           <div 
             onClick={() => { onChange(''); setIsOpen(false); }}
-            className={`px-3 py-2 text-sm cursor-pointer transition-colors ${value === '' ? 'bg-[#f04f45] text-white' : 'text-slate-100 hover:bg-white hover:text-[#f04f45]'}`}
+            className={`px-4 py-2 text-[13px] font-medium cursor-pointer transition-colors ${value === '' ? 'bg-[#FF6B35]/10 text-[#FF6B35]' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
           >
             {defaultLabel}
           </div>
@@ -48,7 +48,7 @@ const CustomDropdown = ({ value, onChange, options, defaultLabel }) => {
             <div 
               key={opt.value}
               onClick={() => { onChange(opt.value); setIsOpen(false); }}
-              className={`px-3 py-2 text-sm cursor-pointer transition-colors ${value === opt.value ? 'bg-[#f04f45] text-white' : 'text-slate-100 hover:bg-white hover:text-[#f04f45]'}`}
+              className={`px-4 py-2 text-[13px] font-medium cursor-pointer transition-colors ${value === opt.value ? 'bg-[#FF6B35]/10 text-[#FF6B35]' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
             >
               {opt.label}
             </div>
@@ -140,10 +140,15 @@ const ManagerDashboard = () => {
     return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(dateString));
   };
 
+  const getInitials = (name) => {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
+
   // --- Chart Data Processing ---
   const trendData = useMemo(() => {
     const grouped = {};
-    const dateMap = {}; // keep original dates for sorting
+    const dateMap = {};
     reports.forEach(r => {
       const dateStr = formatDate(r.weekStartDate);
       if (!grouped[dateStr]) {
@@ -187,40 +192,40 @@ const ManagerDashboard = () => {
     ];
   }, [reports]);
 
-  const COLORS = ['#f97316', '#0f172a', '#94a3b8', '#cbd5e1'];
+  const COLORS = ['#FF6B35', '#0F172A', '#94A3B8', '#CBD5E1'];
 
   return (
-    <div className="space-y-6">
-      {/* Title Banner */}
-      <div className="bg-white p-6 shadow-sm border border-[#f04f45] border-l-4 border-l-orange-600 rounded-xl">
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Team Dashboard</h2>
-        <p className="text-slate-500">
-          Overview of all team members' reports and submission statuses.
-        </p>
-      </div>
-
-      {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-2xl shadow-sm border border-[#f04f45] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="flex flex-col">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Team Member</label>
+    <div className="space-y-8 max-w-[1600px] mx-auto">
+      
+      {/* Premium Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
+        <div>
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
+            <LayoutDashboard className="text-[#FF6B35]" size={28} />
+            Team Overview
+          </h2>
+          <p className="text-slate-500 mt-2 font-medium text-[15px]">
+            Monitor team progress, workload distribution, and weekly reports.
+          </p>
+        </div>
+        
+        {/* Inline Filters */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center text-sm font-semibold text-slate-400 mr-2 uppercase tracking-wider">
+            <Filter size={14} className="mr-1.5" /> Filters
+          </div>
           <CustomDropdown 
             value={selectedUser} 
             onChange={setSelectedUser} 
             options={users.map(u => ({ value: u._id, label: u.name }))} 
             defaultLabel="All Members" 
           />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Project</label>
           <CustomDropdown 
             value={selectedProject} 
             onChange={setSelectedProject} 
             options={projects.map(p => ({ value: p._id, label: p.name }))} 
             defaultLabel="All Projects" 
           />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Status</label>
           <CustomDropdown 
             value={status} 
             onChange={setStatus} 
@@ -231,69 +236,83 @@ const ManagerDashboard = () => {
             defaultLabel="All Statuses" 
           />
         </div>
-        <div className="flex flex-col">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Start Date</label>
-          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
-        </div>
-        <div className="flex flex-col">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">End Date</label>
-          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
-        </div>
       </div>
       
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)] transition-all duration-300 ease-out">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Reports Found</h3>
-          <p className="text-3xl font-bold text-slate-900 mt-2">{loading ? '--' : totalReports}</p>
+        <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group flex items-start justify-between">
+          <div>
+            <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400 mb-1">Total Reports</h3>
+            <p className="text-4xl font-bold text-slate-900 tracking-tight">{loading ? '--' : totalReports}</p>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-[#FF6B35]/10 transition-colors">
+            <FileText className="text-slate-400 group-hover:text-[#FF6B35] transition-colors" size={24} />
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)] transition-all duration-300 ease-out">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Compliance Rate</h3>
-          <p className="text-3xl font-bold text-orange-600 mt-2">{loading ? '--%' : `${complianceRate}%`}</p>
+        <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group flex items-start justify-between">
+          <div>
+            <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400 mb-1">Compliance Rate</h3>
+            <p className="text-4xl font-bold text-[#FF6B35] tracking-tight">{loading ? '--%' : `${complianceRate}%`}</p>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-[#FF6B35]/10 transition-colors">
+            <CheckCircle2 className="text-slate-400 group-hover:text-[#FF6B35] transition-colors" size={24} />
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)] transition-all duration-300 ease-out">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Open Blockers</h3>
-          <p className="text-3xl font-bold text-slate-900 mt-2">{loading ? '--' : openBlockers}</p>
+        <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group flex items-start justify-between">
+          <div>
+            <h3 className="text-[13px] font-bold uppercase tracking-wider text-slate-400 mb-1">Open Blockers</h3>
+            <p className="text-4xl font-bold text-slate-900 tracking-tight">{loading ? '--' : openBlockers}</p>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center group-hover:bg-red-50 transition-colors">
+            <AlertCircle className="text-slate-400 group-hover:text-red-500 transition-colors" size={24} />
+          </div>
         </div>
       </div>
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Trend Chart */}
-        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm col-span-1 lg:col-span-2">
-          <h3 className="text-sm font-semibold text-slate-700 mb-4">Tasks Completed Trend</h3>
-          <div className="h-64 w-full">
+        <div className="bg-white p-8 rounded-[20px] border border-slate-100 shadow-sm col-span-1 lg:col-span-2">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-base font-bold text-slate-900">Task Velocity Trend</h3>
+            <div className="flex items-center gap-3">
+               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 focus:outline-none focus:border-[#FF6B35] transition-colors" />
+               <span className="text-slate-400 text-sm">to</span>
+               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 focus:outline-none focus:border-[#FF6B35] transition-colors" />
+            </div>
+          </div>
+          <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dx={-10} />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                <Line type="monotone" dataKey="tasks" stroke="#f97316" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12, fontWeight: 500}} dy={15} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12, fontWeight: 500}} dx={-10} />
+                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', fontWeight: 600, color: '#0F172A' }} />
+                <Line type="monotone" dataKey="tasks" stroke="#FF6B35" strokeWidth={3} dot={{r: 4, fill: '#FF6B35', strokeWidth: 2, stroke: '#fff'}} activeDot={{r: 6, strokeWidth: 0, fill: '#FF6B35', stroke: '#FF6B35', strokeOpacity: 0.2, strokeWidth: 10}} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Workload Bar Chart */}
-        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm">
-          <h3 className="text-sm font-semibold text-slate-700 mb-4">Workload Distribution by Project</h3>
+        <div className="bg-white p-8 rounded-[20px] border border-slate-100 shadow-sm">
+          <h3 className="text-base font-bold text-slate-900 mb-8">Workload Distribution</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={workloadData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dx={-10} />
-                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} cursor={{fill: '#f1f5f9'}} />
-                <Bar dataKey="tasks" fill="#0f172a" radius={[4, 4, 0, 0]} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12, fontWeight: 500}} dy={15} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12, fontWeight: 500}} dx={-10} />
+                <Tooltip cursor={{fill: '#F8FAFC'}} contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', fontWeight: 600, color: '#0F172A' }} />
+                <Bar dataKey="tasks" fill="#0F172A" radius={[6, 6, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Status Donut Chart */}
-        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm flex flex-col">
-          <h3 className="text-sm font-semibold text-slate-700 mb-4">Submission Status</h3>
+        <div className="bg-white p-8 rounded-[20px] border border-slate-100 shadow-sm flex flex-col">
+          <h3 className="text-base font-bold text-slate-900 mb-2">Submission Status</h3>
           <div className="h-64 w-full flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -301,8 +320,8 @@ const ManagerDashboard = () => {
                   data={statusData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
+                  innerRadius={70}
+                  outerRadius={90}
                   paddingAngle={5}
                   dataKey="value"
                   stroke="none"
@@ -311,8 +330,8 @@ const ManagerDashboard = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', fontWeight: 600 }} itemStyle={{color: '#0F172A'}} />
+                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{fontSize: '13px', fontWeight: 500, color: '#64748B'}} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -320,51 +339,60 @@ const ManagerDashboard = () => {
       </div>
 
       {/* Reports Data Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-[#f04f45] overflow-hidden">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-white rounded-[20px] shadow-sm border border-slate-100 overflow-hidden">
+        <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white">
           <h3 className="text-lg font-bold text-slate-900">Recent Activity Feed</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-100">
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Member</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Project</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Week Period</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Blockers</th>
+              <tr className="bg-slate-50/50 border-b border-slate-100">
+                <th className="px-8 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Member</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Project</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Week Period</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
+                <th className="px-8 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Blockers</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="p-8 text-center text-slate-400">Loading reports...</td>
+                  <td colSpan="5" className="p-12 text-center text-slate-400 font-medium">Loading reports...</td>
                 </tr>
               ) : reports.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="p-8 text-center text-slate-400">No reports found matching your filters.</td>
+                  <td colSpan="5" className="p-12 text-center text-slate-400 font-medium">No reports found matching your filters.</td>
                 </tr>
               ) : (
                 reports.map(report => (
-                  <tr key={report._id} className="hover:bg-slate-50 transition-colors">
-                    <td className="p-4">
-                      <div className="font-medium text-slate-900">{report.user?.name || 'Unknown'}</div>
-                      <div className="text-xs text-slate-500">{report.user?.email}</div>
+                  <tr key={report._id} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-8 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 group-hover:border-[#FF6B35] group-hover:text-[#FF6B35] transition-colors">
+                          {getInitials(report.user?.name)}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-[14px] text-slate-900">{report.user?.name || 'Unknown'}</div>
+                          <div className="text-[13px] text-slate-500 font-medium">{report.user?.email}</div>
+                        </div>
+                      </div>
                     </td>
-                    <td className="p-4 text-sm text-slate-700">{report.project?.name || 'N/A'}</td>
-                    <td className="p-4 text-sm text-slate-700 whitespace-nowrap">
-                      {formatDate(report.weekStartDate)} - {formatDate(report.weekEndDate)}
+                    <td className="px-6 py-4 text-[14px] font-medium text-slate-700">{report.project?.name || 'N/A'}</td>
+                    <td className="px-6 py-4 text-[14px] font-medium text-slate-600 whitespace-nowrap">
+                      {formatDate(report.weekStartDate)} <span className="text-slate-300 mx-1">→</span> {formatDate(report.weekEndDate)}
                     </td>
-                    <td className="p-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${report.submissionStatus === 'submitted' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-                        {report.submissionStatus === 'submitted' ? 'Submitted' : 'Pending'}
+                    <td className="px-6 py-4">
+                      <span className={`px-3 py-1 rounded-full text-[12px] font-bold tracking-wide ${report.submissionStatus === 'submitted' ? 'bg-green-50 text-green-700 border border-green-200/50' : 'bg-[#FF6B35]/10 text-[#FF6B35] border border-[#FF6B35]/20'}`}>
+                        {report.submissionStatus === 'submitted' ? 'SUBMITTED' : 'DRAFT'}
                       </span>
                     </td>
-                    <td className="p-4 text-sm text-slate-700 max-w-xs truncate">
+                    <td className="px-8 py-4 text-[14px] text-slate-700 max-w-[250px] truncate">
                       {report.blockers ? (
-                        <span className="text-red-600 font-medium">{report.blockers}</span>
+                        <span className="text-red-500 font-medium flex items-center gap-1.5" title={report.blockers}>
+                          <AlertCircle size={14} /> {report.blockers}
+                        </span>
                       ) : (
-                        <span className="text-slate-400">None</span>
+                        <span className="text-slate-400 italic">None</span>
                       )}
                     </td>
                   </tr>
