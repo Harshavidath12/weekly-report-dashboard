@@ -13,7 +13,7 @@ const getProjects = asyncHandler(async (req, res) => {
 // @route   POST /api/projects
 // @access  Private/Manager
 const createProject = asyncHandler(async (req, res) => {
-  const { name, description, assignedMembers } = req.body;
+  const { name, description, assignedMembers, status, priority, startDate, endDate } = req.body;
 
   if (!name) {
     res.status(400);
@@ -30,6 +30,10 @@ const createProject = asyncHandler(async (req, res) => {
     name,
     description: description || '',
     assignedMembers: assignedMembers || [],
+    status: status || 'Active',
+    priority: priority || 'Medium',
+    startDate,
+    endDate,
   });
 
   res.status(201).json(project);
