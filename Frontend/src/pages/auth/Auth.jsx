@@ -74,13 +74,16 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-[#fcfaf9]">
+    <div className="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-slate-50">
       {/* Left Branding Panel */}
-      <div className="hidden md:block relative overflow-hidden bg-white h-full w-full">
+      <div className="hidden md:flex relative overflow-hidden bg-gradient-to-r from-white to-slate-50 h-full w-full items-center justify-center">
+        {/* Ambient Purple Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-purple-300/20 w-[400px] h-[400px] rounded-full blur-[120px] mix-blend-multiply pointer-events-none z-0"></div>
+
         <img
           src={bgImage}
           alt="Branding"
-          className="absolute inset-0 w-full h-full object-contain object-center p-8"
+          className="relative z-10 w-full h-full object-contain object-center p-8 drop-shadow-sm"
         />
       </div>
 
@@ -108,8 +111,8 @@ const Auth = () => {
                 type="button"
                 onClick={() => toggleAction('login')}
                 className={`px-8 py-2.5 rounded-full text-[13px] font-semibold transition-all duration-300 ${isLogin
-                    ? 'bg-[#f04f45] text-white shadow-md shadow-red-500/20'
-                    : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-[#f04f45] text-white shadow-md shadow-red-500/20'
+                  : 'text-gray-500 hover:text-gray-700'
                   }`}
               >
                 Login
@@ -118,8 +121,8 @@ const Auth = () => {
                 type="button"
                 onClick={() => toggleAction('register')}
                 className={`px-8 py-2.5 rounded-full text-[13px] font-semibold transition-all duration-300 ${!isLogin
-                    ? 'bg-[#f04f45] text-white shadow-md shadow-red-500/20'
-                    : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-[#f04f45] text-white shadow-md shadow-red-500/20'
+                  : 'text-gray-500 hover:text-gray-700'
                   }`}
               >
                 Register
