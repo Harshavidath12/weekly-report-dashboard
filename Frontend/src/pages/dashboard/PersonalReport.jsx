@@ -76,8 +76,8 @@ const PersonalReport = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-[#F8FAFC]">My Weekly Reports</h2>
-          <p className="text-[#94A3B8] mt-1">
+          <h2 className="text-2xl font-bold text-slate-900">My Weekly Reports</h2>
+          <p className="text-slate-500 mt-1">
             Manage your personal report submissions.
           </p>
         </div>
@@ -85,14 +85,14 @@ const PersonalReport = () => {
         {view === 'list' ? (
           <button
             onClick={() => setView('create')}
-            className="flex items-center px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#3B82F6] shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-all font-medium"
+            className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-sm transition-all font-medium"
           >
             <Plus size={18} className="mr-2" /> New Report
           </button>
         ) : (
           <button
             onClick={() => { setView('list'); setSelectedReport(null); }}
-            className="flex items-center px-4 py-2 bg-[#1E293B] text-[#F8FAFC] border border-[#334155] rounded-lg hover:bg-white/5 transition-colors font-medium"
+            className="flex items-center px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg hover:bg-orange-600 hover:text-white hover:border-orange-600 transition-colors font-medium"
           >
             <ArrowLeft size={18} className="mr-2" /> Back to List
           </button>
@@ -100,7 +100,7 @@ const PersonalReport = () => {
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-lg">
+        <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg">
           {error}
         </div>
       )}
@@ -109,15 +109,15 @@ const PersonalReport = () => {
       {view === 'list' && (
         <div className="space-y-4">
           {reports.length === 0 ? (
-            <div className="bg-[#1E293B] p-12 rounded-xl border border-[#334155] text-center">
-              <FileText size={48} className="mx-auto text-[#334155] mb-4" />
-              <h3 className="text-lg font-medium text-[#F8FAFC] mb-2">No reports yet</h3>
-              <p className="text-[#94A3B8] mb-6">Create your first weekly report to get started.</p>
+            <div className="bg-white p-12 rounded-xl border border-slate-100 shadow-sm text-center">
+              <FileText size={48} className="mx-auto text-slate-300 mb-4" />
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No reports yet</h3>
+              <p className="text-slate-500 mb-6">Create your first weekly report to get started.</p>
               <button
                 onClick={() => setView('create')}
-                className="inline-flex items-center px-4 py-2 bg-[#1E293B] text-[#F8FAFC] border border-[#334155] hover:border-[#3B82F6]/50 rounded-lg transition-colors"
+                className="inline-flex items-center px-4 py-2 bg-orange-600 text-white hover:bg-orange-700 rounded-lg transition-colors font-medium"
               >
-                <Plus size={18} className="mr-2 text-[#3B82F6]" /> Create Report
+                <Plus size={18} className="mr-2" /> Create Report
               </button>
             </div>
           ) : (
@@ -125,35 +125,35 @@ const PersonalReport = () => {
               {reports.map((report) => (
                 <div 
                   key={report._id} 
-                  className="bg-[#1E293B] p-5 rounded-xl border border-[#334155] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-[#3B82F6]/30 transition-colors"
+                  className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:scale-[1.01] hover:shadow-[0_8px_25px_rgba(168,85,247,0.12)] transition-all"
                 >
                   <div>
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className="font-semibold text-[#F8FAFC] text-lg">
+                      <h3 className="font-bold text-slate-900 text-lg">
                         {formatDate(report.weekStartDate)} - {formatDate(report.weekEndDate)}
                       </h3>
                       <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         report.submissionStatus === 'submitted' 
-                          ? 'bg-green-500/10 text-green-400 border border-green-500/20'
-                          : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
+                          ? 'bg-green-50 text-green-700 border border-green-200'
+                          : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
                       }`}>
                         {report.submissionStatus.charAt(0).toUpperCase() + report.submissionStatus.slice(1)}
                       </span>
                     </div>
-                    <p className="text-sm text-[#94A3B8] flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#3B82F6]"></span>
+                    <p className="text-sm text-slate-500 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-orange-500"></span>
                       {report.project?.name || 'Unknown Project'}
                     </p>
                   </div>
                   
                   <button
                     onClick={() => handleEdit(report)}
-                    className="flex items-center px-4 py-2 text-sm bg-[#0F172A] text-[#F8FAFC] border border-[#334155] rounded-lg hover:border-[#3B82F6] transition-colors"
+                    className="flex items-center px-4 py-2 text-sm border border-orange-600 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors font-medium"
                   >
                     {report.submissionStatus === 'submitted' ? (
-                      <><FileText size={16} className="mr-2 text-[#94A3B8]" /> View</>
+                      <><FileText size={16} className="mr-2 text-orange-500" /> View</>
                     ) : (
-                      <><Edit2 size={16} className="mr-2 text-[#3B82F6]" /> Edit</>
+                      <><Edit2 size={16} className="mr-2 text-orange-500" /> Edit</>
                     )}
                   </button>
                 </div>
