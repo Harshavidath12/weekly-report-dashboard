@@ -130,10 +130,10 @@ const ProjectManager = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-[#F8FAFC]">
+          <h2 className="text-2xl font-bold text-slate-900">
             {user?.role === 'Manager' ? 'Project Management' : 'Available Projects'}
           </h2>
-          <p className="text-[#94A3B8] mt-1">
+          <p className="text-slate-500 mt-1">
             {user?.role === 'Manager' 
               ? 'Manage projects and assign team members.' 
               : 'Browse active projects and join them to start reporting.'}
@@ -162,50 +162,50 @@ const ProjectManager = () => {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {projects.length === 0 ? (
-            <div className="col-span-full bg-[#1E293B] p-12 rounded-xl border border-[#334155] text-center">
-              <Folder size={48} className="mx-auto text-[#334155] mb-4" />
-              <h3 className="text-lg font-medium text-[#F8FAFC] mb-2">No projects available</h3>
-              <p className="text-[#94A3B8] mb-6">There are currently no active projects.</p>
+            <div className="col-span-full bg-white p-12 rounded-2xl border border-slate-100 shadow-sm text-center">
+              <Folder size={48} className="mx-auto text-slate-300 mb-4" />
+              <h3 className="text-lg font-medium text-slate-900 mb-2">No projects available</h3>
+              <p className="text-slate-500 mb-6">There are currently no active projects.</p>
             </div>
           ) : (
             projects.map((project) => {
               const isAssigned = project.assignedMembers?.includes(user._id);
 
               return (
-                <div key={project._id} className="bg-[#1E293B] p-5 rounded-xl border border-[#334155] hover:border-[#3B82F6]/30 transition-colors flex flex-col justify-between">
+                <div key={project._id} className={`bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between ${isAssigned ? 'border-l-4 border-l-orange-500' : ''}`}>
                   <div>
-                    <h3 className="font-semibold text-[#F8FAFC] text-lg mb-1 flex items-center justify-between">
+                    <h3 className="font-bold text-slate-900 text-lg mb-1 flex items-center justify-between">
                       <span className="flex items-center">
-                        <Folder size={16} className="mr-2 text-[#3B82F6]" />
+                        <Folder size={16} className="mr-2 text-orange-500" />
                         {project.name}
                       </span>
                       {user?.role !== 'Manager' && isAssigned && (
-                        <span className="text-xs bg-green-500/10 text-green-400 border border-green-500/20 px-2 py-0.5 rounded-full flex items-center">
+                        <span className="bg-green-50 text-green-700 text-xs px-2.5 py-0.5 rounded-full border border-green-200 flex items-center">
                           <Check size={12} className="mr-1" /> Joined
                         </span>
                       )}
                     </h3>
-                    <p className="text-sm text-[#94A3B8] line-clamp-2 mt-2">
+                    <p className="text-slate-500 text-sm line-clamp-2 mt-2">
                       {project.description || 'No description provided.'}
                     </p>
-                    <div className="mt-3 flex items-center text-xs text-[#94A3B8]">
+                    <div className="mt-3 flex items-center text-slate-500 text-sm">
                       <Users size={14} className="mr-1.5" />
                       {project.assignedMembers?.length || 0} members
                     </div>
                   </div>
                   
-                  <div className="mt-4 pt-4 border-t border-[#334155] flex justify-end gap-2">
+                  <div className="mt-4 pt-4 border-t border-slate-100 flex justify-end gap-2">
                     {user?.role === 'Manager' ? (
                       <>
                         <button
                           onClick={() => openModal(project)}
-                          className="p-2 text-[#94A3B8] hover:text-[#3B82F6] hover:bg-[#3B82F6]/10 rounded-lg transition-colors"
+                          className="p-2 text-slate-400 hover:text-orange-600 hover:bg-orange-50 rounded-xl transition-colors"
                         >
                           <Edit2 size={16} />
                         </button>
                         <button
                           onClick={() => handleDelete(project._id)}
-                          className="p-2 text-[#94A3B8] hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                         >
                           <Trash2 size={16} />
                         </button>
@@ -214,14 +214,14 @@ const ProjectManager = () => {
                       isAssigned ? (
                         <button
                           onClick={() => handleLeave(project._id)}
-                          className="w-full py-2 text-sm text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white border border-red-500/20 rounded-lg transition-colors"
+                          className="border border-red-200 text-red-600 font-medium py-2 px-4 rounded-xl hover:bg-red-50 transition-colors w-full"
                         >
                           Leave Project
                         </button>
                       ) : (
                         <button
                           onClick={() => handleJoin(project._id)}
-                          className="w-full py-2 text-sm text-[#F8FAFC] bg-[#0F172A] hover:border-[#3B82F6] border border-[#334155] rounded-lg transition-colors"
+                          className="bg-orange-600 text-white font-medium py-2 px-4 rounded-xl hover:bg-orange-700 transition-colors w-full"
                         >
                           Join Project
                         </button>
