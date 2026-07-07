@@ -48,7 +48,7 @@ const DashboardLayout = () => {
                 to="/dashboard"
                 end
                 className={({ isActive }) =>
-                  `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-orange-50 border-orange-600 text-orange-600' : 'border-transparent text-slate-500 hover:bg-slate-100/80 hover:text-slate-900'}`
+                  `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-[#f04f45] border-[#c03f37] text-white' : 'border-transparent text-slate-900 hover:bg-[#f04f45] hover:border-[#f04f45] hover:text-white'}`
                 }
               >
                 <LayoutDashboard size={18} /> Team Dashboard
@@ -57,7 +57,7 @@ const DashboardLayout = () => {
             <NavLink
               to="/dashboard/projects"
               className={({ isActive }) =>
-                `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-orange-50 border-orange-600 text-orange-600' : 'border-transparent text-slate-500 hover:bg-slate-100/80 hover:text-slate-900'}`
+                `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-[#f04f45] border-[#c03f37] text-white' : 'border-transparent text-slate-900 hover:bg-[#f04f45] hover:border-[#f04f45] hover:text-white'}`
               }
             >
               <Folder size={18} /> {user.role === 'Manager' ? 'Manage Projects' : 'Projects'}
@@ -65,7 +65,7 @@ const DashboardLayout = () => {
             <NavLink
               to="/dashboard/personal"
               className={({ isActive }) =>
-                `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-orange-50 border-orange-600 text-orange-600' : 'border-transparent text-slate-500 hover:bg-slate-100/80 hover:text-slate-900'}`
+                `flex items-center gap-4 px-5 py-3 font-semibold text-[15px] transition-all duration-300 border-l-4 rounded-r-2xl ${isActive ? 'bg-[#f04f45] border-[#c03f37] text-white' : 'border-transparent text-slate-900 hover:bg-[#f04f45] hover:border-[#f04f45] hover:text-white'}`
               }
             >
               <FileText size={18} /> My Reports
