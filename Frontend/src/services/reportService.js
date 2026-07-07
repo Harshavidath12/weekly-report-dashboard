@@ -40,11 +40,19 @@ const getReportById = async (reportId) => {
   return response.data;
 };
 
+// Get all reports (Manager only)
+const getAllReports = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const response = await axios.get(`${API_URL}?${query}`, authConfig());
+  return response.data;
+};
+
 const reportService = {
   createReport,
   updateReport,
   getMyReports,
   getReportById,
+  getAllReports,
 };
 
 export default reportService;
