@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import reportService from '../../services/reportService';
@@ -86,6 +87,55 @@ const ManagerDashboard = () => {
     return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date(dateString));
   };
 
+  // --- Chart Data Processing ---
+  const trendData = useMemo(() => {
+    const grouped = {};
+    const dateMap = {}; // keep original dates for sorting
+    reports.forEach(r => {
+      const dateStr = formatDate(r.weekStartDate);
+      if (!grouped[dateStr]) {
+        grouped[dateStr] = 0;
+        dateMap[dateStr] = new Date(r.weekStartDate);
+      }
+      grouped[dateStr] += (r.tasksCompleted?.length || 0);
+    });
+    
+    return Object.keys(grouped)
+      .sort((a, b) => dateMap[a] - dateMap[b])
+      .map(date => ({
+        name: date,
+        tasks: grouped[date]
+      }));
+  }, [reports]);
+
+  const workloadData = useMemo(() => {
+    const grouped = {};
+    reports.forEach(r => {
+      const pName = r.project?.name || 'Unknown';
+      if (!grouped[pName]) grouped[pName] = 0;
+      grouped[pName] += (r.tasksCompleted?.length || 0);
+    });
+    return Object.keys(grouped).map(name => ({
+      name,
+      tasks: grouped[name]
+    }));
+  }, [reports]);
+
+  const statusData = useMemo(() => {
+    let submitted = 0;
+    let pending = 0;
+    reports.forEach(r => {
+      if (r.submissionStatus === 'submitted') submitted++;
+      else pending++;
+    });
+    return [
+      { name: 'Submitted', value: submitted },
+      { name: 'Pending', value: pending }
+    ];
+  }, [reports]);
+
+  const COLORS = ['#f97316', '#0f172a', '#94a3b8', '#cbd5e1'];
+
   return (
     <div className="space-y-6">
       {/* Title Banner */}
@@ -146,8 +196,73 @@ const ManagerDashboard = () => {
         </div>
       </div>
 
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Trend Chart */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm col-span-1 lg:col-span-2">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">Tasks Completed Trend</h3>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={trendData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dx={-10} />
+                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                <Line type="monotone" dataKey="tasks" stroke="#f97316" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6}} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Workload Bar Chart */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">Workload Distribution by Project</h3>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={workloadData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: '#64748b', fontSize: 12}} dx={-10} />
+                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} cursor={{fill: '#f1f5f9'}} />
+                <Bar dataKey="tasks" fill="#0f172a" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Status Donut Chart */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+          <h3 className="text-sm font-semibold text-slate-700 mb-4">Submission Status</h3>
+          <div className="h-64 w-full flex-1">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={statusData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {statusData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                <Legend verticalAlign="bottom" height={36} iconType="circle" />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
       {/* Reports Data Table */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+          <h3 className="text-lg font-bold text-slate-900">Recent Activity Feed</h3>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
