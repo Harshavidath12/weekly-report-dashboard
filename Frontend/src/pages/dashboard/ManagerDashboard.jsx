@@ -23,15 +23,15 @@ const ManagerDashboard = () => {
       {/* Sample Metrics Cards UI */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-colors hover:border-slate-200">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Reports Submitted</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Reports Submitted</h3>
           <p className="text-3xl font-bold text-slate-900 mt-2">--</p>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-colors hover:border-slate-200">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Compliance Rate</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Compliance Rate</h3>
           <p className="text-3xl font-bold text-orange-600 mt-2">--%</p>
         </div>
         <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-colors hover:border-slate-200">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">Open Blockers</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Open Blockers</h3>
           <p className="text-3xl font-bold text-slate-900 mt-2">--</p>
         </div>
       </div>
