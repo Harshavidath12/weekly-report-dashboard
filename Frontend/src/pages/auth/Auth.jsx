@@ -166,26 +166,28 @@ const Auth = () => {
               </label>
             </div>
 
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                autoComplete="new-password"
-                placeholder=" "
-                className="peer block w-full bg-white border-2 border-[#f04f45]/30 rounded-[1.5rem] px-5 py-4 pr-12 text-gray-800 text-[15px] focus:outline-none focus:ring-0 focus:border-[#f04f45] transition-all shadow-sm tracking-widest"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <label className="absolute left-4 px-1.5 bg-white text-[15px] text-gray-400 pointer-events-none transition-all duration-200 origin-left z-10 -top-2.5 scale-75 peer-placeholder-shown:top-4 peer-placeholder-shown:scale-100 peer-focus:-top-2.5 peer-focus:scale-75 peer-focus:text-gray-500">
-                Password *
-              </label>
-              <button
-                type="button"
-                className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors z-20"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+            <div>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  autoComplete="new-password"
+                  placeholder=" "
+                  className="peer block w-full bg-white border-2 border-[#f04f45]/30 rounded-[1.5rem] px-5 py-4 pr-12 text-gray-800 text-[15px] focus:outline-none focus:ring-0 focus:border-[#f04f45] transition-all shadow-sm tracking-widest"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <label className="absolute left-4 px-1.5 bg-white text-[15px] text-gray-400 pointer-events-none transition-all duration-200 origin-left z-10 -top-2.5 scale-75 peer-placeholder-shown:top-4 peer-placeholder-shown:scale-100 peer-focus:-top-2.5 peer-focus:scale-75 peer-focus:text-gray-500">
+                  Password *
+                </label>
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors z-20"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
               
               {!isLogin && (
                 <div className="mt-3 px-3 space-y-1.5">
@@ -200,11 +202,7 @@ const Auth = () => {
               {!isLogin && passwordError && <p className="mt-2 text-xs text-red-500 px-3">{passwordError}</p>}
             </div>
             
-            <div className="flex justify-end pr-2 -mt-2">
-               <button type="button" className="text-sm text-[#f04f45] hover:text-[#d9453c] font-medium transition-colors">
-                 Forgot Password?
-               </button>
-            </div>
+
 
             {!isLogin && (
               <div className="relative">
@@ -231,7 +229,7 @@ const Auth = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center py-4 px-4 mt-8 rounded-[1.5rem] text-[16px] font-bold text-white bg-[#f04f45] hover:bg-[#d9453c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f04f45] disabled:opacity-50 transition-all duration-200 shadow-[0_8px_20px_rgba(240,79,69,0.3)] hover:shadow-[0_10px_25px_rgba(240,79,69,0.4)] hover:-translate-y-0.5 active:translate-y-0"
+              className="w-full flex justify-center py-4 px-4 mt-8 rounded-[1.5rem] text-[16px] font-bold text-white bg-[#f04f45] border-2 border-[#f04f45] hover:bg-white hover:text-[#f04f45] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f04f45] disabled:opacity-50 transition-all duration-300 shadow-[0_8px_20px_rgba(240,79,69,0.3)] hover:shadow-[0_10px_25px_rgba(240,79,69,0.2)] hover:-translate-y-0.5 active:translate-y-0"
             >
               {isLoading 
                 ? (isLogin ? 'Signing in...' : 'Creating account...') 
