@@ -133,59 +133,60 @@ const Auth = () => {
           {error && <div className="bg-red-50 text-red-500 p-3 rounded-xl mb-6 text-sm text-center font-medium border border-red-100">{error}</div>}
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
+          <form onSubmit={handleSubmit} className="space-y-6 mt-4" autoComplete="off">
             {!isLogin && (
               <div className="relative">
-                <label className="absolute -top-2 left-4 px-1.5 bg-white text-[11px] font-medium text-gray-400">
-                  Full Name *
-                </label>
                 <input
                   type="text"
                   required
                   autoComplete="off"
-                  className="block w-full bg-white border border-gray-200/80 rounded-[1.5rem] px-5 py-4 text-gray-800 text-[15px] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 hover:border-gray-300 transition-all shadow-sm"
+                  placeholder=" "
+                  className="peer block w-full bg-white border-2 border-[#f04f45]/30 rounded-[1.5rem] px-5 py-4 text-gray-800 text-[15px] focus:outline-none focus:ring-0 focus:border-[#f04f45] transition-all shadow-sm"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
+                <label className="absolute left-4 px-1.5 bg-white text-[15px] text-gray-400 pointer-events-none transition-all duration-200 origin-left z-10 -top-2.5 scale-75 peer-placeholder-shown:top-4 peer-placeholder-shown:scale-100 peer-focus:-top-2.5 peer-focus:scale-75 peer-focus:text-gray-500">
+                  Full Name *
+                </label>
               </div>
             )}
-
+            
             <div className="relative">
-              <label className="absolute -top-2 left-4 px-1.5 bg-white text-[11px] font-medium text-gray-400">
-                Email address *
-              </label>
               <input
                 type="email"
                 required
                 autoComplete="off"
-                placeholder="harshithavidath@gmail.com"
-                className={`block w-full bg-[#f4f7fe]/50 border border-gray-200/80 rounded-[1.5rem] px-5 py-4 text-gray-800 text-[15px] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 hover:border-gray-300 transition-all shadow-sm ${email ? 'bg-blue-50/30' : ''}`}
+                placeholder=" "
+                className={`peer block w-full bg-white border-2 border-[#f04f45]/30 rounded-[1.5rem] px-5 py-4 text-gray-800 text-[15px] focus:outline-none focus:ring-0 focus:border-[#f04f45] transition-all shadow-sm`}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+              <label className="absolute left-4 px-1.5 bg-white text-[15px] text-gray-400 pointer-events-none transition-all duration-200 origin-left z-10 -top-2.5 scale-75 peer-placeholder-shown:top-4 peer-placeholder-shown:scale-100 peer-focus:-top-2.5 peer-focus:scale-75 peer-focus:text-gray-500">
+                Email address *
+              </label>
             </div>
 
             <div className="relative">
-              <label className="absolute -top-2 left-4 px-1.5 bg-white text-[11px] font-medium text-gray-400">
-                Password *
-              </label>
               <input
                 type={showPassword ? 'text' : 'password'}
                 required
                 autoComplete="new-password"
-                placeholder="••••••••••••"
-                className="block w-full bg-white border border-gray-200/80 rounded-[1.5rem] px-5 py-4 pr-12 text-gray-800 text-[15px] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 hover:border-gray-300 transition-all shadow-sm tracking-widest"
+                placeholder=" "
+                className="peer block w-full bg-white border-2 border-[#f04f45]/30 rounded-[1.5rem] px-5 py-4 pr-12 text-gray-800 text-[15px] focus:outline-none focus:ring-0 focus:border-[#f04f45] transition-all shadow-sm tracking-widest"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <label className="absolute left-4 px-1.5 bg-white text-[15px] text-gray-400 pointer-events-none transition-all duration-200 origin-left z-10 -top-2.5 scale-75 peer-placeholder-shown:top-4 peer-placeholder-shown:scale-100 peer-focus:-top-2.5 peer-focus:scale-75 peer-focus:text-gray-500">
+                Password *
+              </label>
               <button
                 type="button"
-                className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute inset-y-0 right-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors z-20"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
-
+              
               {!isLogin && (
                 <div className="mt-3 px-3 space-y-1.5">
                   {criteria.map((c, i) => (
@@ -198,20 +199,26 @@ const Auth = () => {
               )}
               {!isLogin && passwordError && <p className="mt-2 text-xs text-red-500 px-3">{passwordError}</p>}
             </div>
+            
+            <div className="flex justify-end pr-2 -mt-2">
+               <button type="button" className="text-sm text-[#f04f45] hover:text-[#d9453c] font-medium transition-colors">
+                 Forgot Password?
+               </button>
+            </div>
 
             {!isLogin && (
               <div className="relative">
-                <label className="absolute -top-2 left-4 px-1.5 bg-white text-[11px] font-medium text-gray-400 z-10">
-                  Role *
-                </label>
                 <select
-                  className="block w-full bg-white border border-gray-200/80 rounded-[1.5rem] px-5 py-4 text-gray-800 text-[15px] focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500 hover:border-gray-300 transition-all shadow-sm appearance-none cursor-pointer"
+                  className="peer block w-full bg-white border-2 border-[#f04f45]/30 rounded-[1.5rem] px-5 py-4 text-gray-800 text-[15px] focus:outline-none focus:ring-0 focus:border-[#f04f45] transition-all shadow-sm appearance-none cursor-pointer"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                 >
                   <option value="Team Member">Team Member</option>
                   <option value="Manager">Manager</option>
                 </select>
+                <label className="absolute left-4 px-1.5 bg-white text-[15px] text-gray-400 pointer-events-none transition-all duration-200 origin-left z-10 -top-2.5 scale-75">
+                  Role *
+                </label>
                 {/* Custom dropdown arrow */}
                 <div className="pointer-events-none absolute inset-y-0 right-5 flex items-center text-gray-400">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -226,8 +233,8 @@ const Auth = () => {
               disabled={isLoading}
               className="w-full flex justify-center py-4 px-4 mt-8 rounded-[1.5rem] text-[16px] font-bold text-white bg-[#f04f45] hover:bg-[#d9453c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#f04f45] disabled:opacity-50 transition-all duration-200 shadow-[0_8px_20px_rgba(240,79,69,0.3)] hover:shadow-[0_10px_25px_rgba(240,79,69,0.4)] hover:-translate-y-0.5 active:translate-y-0"
             >
-              {isLoading
-                ? (isLogin ? 'Signing in...' : 'Creating account...')
+              {isLoading 
+                ? (isLogin ? 'Signing in...' : 'Creating account...') 
                 : (isLogin ? 'Login' : 'Register Now')}
             </button>
           </form>
