@@ -1,10 +1,63 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import reportService from '../../services/reportService';
 import userService from '../../services/userService';
 import projectService from '../../services/projectService';
+import { ChevronDown } from 'lucide-react';
+
+const CustomDropdown = ({ value, onChange, options, defaultLabel }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find(opt => opt.value === value);
+  const displayLabel = selectedOption ? selectedOption.label : defaultLabel;
+
+  return (
+    <div className="relative w-full" ref={dropdownRef}>
+      <div 
+        onClick={() => setIsOpen(!isOpen)}
+        className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all flex justify-between items-center cursor-pointer"
+        tabIndex={0}
+        onKeyDown={(e) => { if (e.key === 'Enter') setIsOpen(!isOpen); }}
+      >
+        <span className="truncate">{displayLabel}</span>
+        <ChevronDown size={16} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </div>
+      
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-2 bg-slate-900 border border-slate-700 rounded-xl shadow-lg overflow-hidden py-1 max-h-60 overflow-y-auto">
+          <div 
+            onClick={() => { onChange(''); setIsOpen(false); }}
+            className={`px-3 py-2 text-sm cursor-pointer transition-colors ${value === '' ? 'bg-[#f04f45] text-white' : 'text-slate-100 hover:bg-white hover:text-[#f04f45]'}`}
+          >
+            {defaultLabel}
+          </div>
+          {options.map((opt) => (
+            <div 
+              key={opt.value}
+              onClick={() => { onChange(opt.value); setIsOpen(false); }}
+              className={`px-3 py-2 text-sm cursor-pointer transition-colors ${value === opt.value ? 'bg-[#f04f45] text-white' : 'text-slate-100 hover:bg-white hover:text-[#f04f45]'}`}
+            >
+              {opt.label}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ManagerDashboard = () => {
   const { user } = useAuth();
@@ -150,25 +203,33 @@ const ManagerDashboard = () => {
       <div className="bg-white p-4 rounded-2xl shadow-sm border border-[#f04f45] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
         <div className="flex flex-col">
           <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Team Member</label>
-          <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all">
-            <option value="">All Members</option>
-            {users.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
-          </select>
+          <CustomDropdown 
+            value={selectedUser} 
+            onChange={setSelectedUser} 
+            options={users.map(u => ({ value: u._id, label: u.name }))} 
+            defaultLabel="All Members" 
+          />
         </div>
         <div className="flex flex-col">
           <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Project</label>
-          <select value={selectedProject} onChange={(e) => setSelectedProject(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all">
-            <option value="">All Projects</option>
-            {projects.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
-          </select>
+          <CustomDropdown 
+            value={selectedProject} 
+            onChange={setSelectedProject} 
+            options={projects.map(p => ({ value: p._id, label: p.name }))} 
+            defaultLabel="All Projects" 
+          />
         </div>
         <div className="flex flex-col">
           <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all">
-            <option value="">All Statuses</option>
-            <option value="submitted">Submitted</option>
-            <option value="draft">Pending (Draft)</option>
-          </select>
+          <CustomDropdown 
+            value={status} 
+            onChange={setStatus} 
+            options={[
+              { value: 'submitted', label: 'Submitted' },
+              { value: 'draft', label: 'Pending (Draft)' }
+            ]} 
+            defaultLabel="All Statuses" 
+          />
         </div>
         <div className="flex flex-col">
           <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Start Date</label>
