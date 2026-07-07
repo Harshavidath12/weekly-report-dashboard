@@ -139,7 +139,7 @@ const ManagerDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Title Banner */}
-      <div className="bg-white p-6 shadow-sm border border-slate-100 border-l-4 border-l-orange-600 rounded-xl">
+      <div className="bg-white p-6 shadow-sm border border-[#f04f45] border-l-4 border-l-orange-600 rounded-xl">
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Team Dashboard</h2>
         <p className="text-slate-500">
           Overview of all team members' reports and submission statuses.
@@ -147,50 +147,50 @@ const ManagerDashboard = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-[#f04f45] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-slate-500 mb-1">Team Member</label>
-          <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)} className="p-2 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-orange-500">
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Team Member</label>
+          <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all">
             <option value="">All Members</option>
             {users.map(u => <option key={u._id} value={u._id}>{u.name}</option>)}
           </select>
         </div>
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-slate-500 mb-1">Project</label>
-          <select value={selectedProject} onChange={(e) => setSelectedProject(e.target.value)} className="p-2 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-orange-500">
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Project</label>
+          <select value={selectedProject} onChange={(e) => setSelectedProject(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all">
             <option value="">All Projects</option>
             {projects.map(p => <option key={p._id} value={p._id}>{p.name}</option>)}
           </select>
         </div>
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-slate-500 mb-1">Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value)} className="p-2 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-orange-500">
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Status</label>
+          <select value={status} onChange={(e) => setStatus(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all">
             <option value="">All Statuses</option>
             <option value="submitted">Submitted</option>
             <option value="draft">Pending (Draft)</option>
           </select>
         </div>
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-slate-500 mb-1">Start Date</label>
-          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="p-2 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-orange-500" />
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">Start Date</label>
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
         </div>
         <div className="flex flex-col">
-          <label className="text-xs font-semibold text-slate-500 mb-1">End Date</label>
-          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="p-2 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-orange-500" />
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5 block">End Date</label>
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all" />
         </div>
       </div>
       
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-colors hover:border-slate-200">
+        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)] transition-all duration-300 ease-out">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Reports Found</h3>
           <p className="text-3xl font-bold text-slate-900 mt-2">{loading ? '--' : totalReports}</p>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-colors hover:border-slate-200">
+        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)] transition-all duration-300 ease-out">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Compliance Rate</h3>
           <p className="text-3xl font-bold text-orange-600 mt-2">{loading ? '--%' : `${complianceRate}%`}</p>
         </div>
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm transition-colors hover:border-slate-200">
+        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm hover:scale-[1.02] hover:shadow-[0_10px_30px_rgba(168,85,247,0.15)] transition-all duration-300 ease-out">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Open Blockers</h3>
           <p className="text-3xl font-bold text-slate-900 mt-2">{loading ? '--' : openBlockers}</p>
         </div>
@@ -199,7 +199,7 @@ const ManagerDashboard = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Trend Chart */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm col-span-1 lg:col-span-2">
+        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm col-span-1 lg:col-span-2">
           <h3 className="text-sm font-semibold text-slate-700 mb-4">Tasks Completed Trend</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -215,7 +215,7 @@ const ManagerDashboard = () => {
         </div>
 
         {/* Workload Bar Chart */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm">
           <h3 className="text-sm font-semibold text-slate-700 mb-4">Workload Distribution by Project</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -231,7 +231,7 @@ const ManagerDashboard = () => {
         </div>
 
         {/* Status Donut Chart */}
-        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
+        <div className="bg-white p-6 rounded-2xl border border-[#f04f45] shadow-sm flex flex-col">
           <h3 className="text-sm font-semibold text-slate-700 mb-4">Submission Status</h3>
           <div className="h-64 w-full flex-1">
             <ResponsiveContainer width="100%" height="100%">
@@ -259,7 +259,7 @@ const ManagerDashboard = () => {
       </div>
 
       {/* Reports Data Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-[#f04f45] overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
           <h3 className="text-lg font-bold text-slate-900">Recent Activity Feed</h3>
         </div>
