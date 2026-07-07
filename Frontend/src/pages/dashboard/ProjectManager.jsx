@@ -16,8 +16,13 @@ const ProjectManager = () => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    status: 'Active',
+    priority: 'Medium',
+    startDate: '',
+    endDate: '',
     assignedMembers: []
   });
+  const [memberSearch, setMemberSearch] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -46,21 +51,40 @@ const ProjectManager = () => {
     if (project) {
       setEditingProject(project);
       setFormData({ 
-        name: project.name, 
-        description: project.description,
+        name: project.name || '', 
+        description: project.description || '',
+        status: project.status || 'Active',
+        priority: project.priority || 'Medium',
+        startDate: project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : '',
+        endDate: project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : '',
         assignedMembers: project.assignedMembers || [] 
       });
     } else {
       setEditingProject(null);
-      setFormData({ name: '', description: '', assignedMembers: [] });
+      setFormData({ 
+        name: '', 
+        description: '', 
+        status: 'Active',
+        priority: 'Medium',
+        startDate: '',
+        endDate: '',
+        assignedMembers: [] 
+      });
     }
+    setMemberSearch('');
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingProject(null);
-    setFormData({ name: '', description: '', assignedMembers: [] });
+    setFormData({ name: '', description: '', status: 'Active', priority: 'Medium', startDate: '', endDate: '', assignedMembers: [] });
+    setMemberSearch('');
+  };
+
+  const getInitials = (name) => {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
   };
 
   const handleChange = (e) => {
@@ -174,17 +198,38 @@ const ProjectManager = () => {
               return (
                 <div key={project._id} className={`bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between ${isAssigned ? 'border-l-4 border-l-orange-500' : ''}`}>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-lg mb-1 flex items-center justify-between">
-                      <span className="flex items-center">
-                        <Folder size={16} className="mr-2 text-orange-500" />
-                        {project.name}
-                      </span>
-                      {user?.role !== 'Manager' && isAssigned && (
-                        <span className="bg-green-50 text-green-700 text-xs px-2.5 py-0.5 rounded-full border border-green-200 flex items-center">
-                          <Check size={12} className="mr-1" /> Joined
-                        </span>
-                      )}
-                    </h3>
+                    <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
+                      <h3 className="font-bold text-slate-900 text-lg flex flex-wrap items-center gap-2 max-w-full">
+                        <Folder size={16} className="text-orange-500 shrink-0" />
+                        <span className="break-words">{project.name}</span>
+                        {project.priority && (
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0 ${
+                            project.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' :
+                            project.priority === 'Low' ? 'bg-slate-100 text-slate-600 border border-slate-200' :
+                            'bg-amber-50 text-amber-700 border border-amber-200'
+                          }`}>
+                            {project.priority}
+                          </span>
+                        )}
+                      </h3>
+                      
+                      <div className="flex flex-wrap items-center gap-2 shrink-0">
+                        {project.status && (
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium border whitespace-nowrap ${
+                            project.status === 'Active' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                            project.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-100' :
+                            'bg-slate-100 text-slate-600 border-slate-200'
+                          }`}>
+                            {project.status}
+                          </span>
+                        )}
+                        {user?.role !== 'Manager' && isAssigned && (
+                          <span className="bg-green-50 text-green-700 text-xs px-2.5 py-0.5 rounded-full border border-green-200 flex items-center whitespace-nowrap">
+                            <Check size={12} className="mr-1" /> Joined
+                          </span>
+                        )}
+                      </div>
+                    </div>
                     <p className="text-slate-500 text-sm line-clamp-2 mt-2">
                       {project.description || 'No description provided.'}
                     </p>
@@ -192,6 +237,11 @@ const ProjectManager = () => {
                       <Users size={14} className="mr-1.5" />
                       {project.assignedMembers?.length || 0} members
                     </div>
+                    {(project.startDate || project.endDate) && (
+                      <span className="text-xs text-slate-400 font-medium tracking-wide mt-2 block">
+                        Duration: {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'N/A'} - {project.endDate ? new Date(project.endDate).toLocaleDateString() : 'Ongoing'}
+                      </span>
+                    )}
                   </div>
                   
                   <div className="mt-4 pt-4 border-t border-slate-100 flex justify-end gap-2">
@@ -237,79 +287,164 @@ const ProjectManager = () => {
 
       {/* Modal for Managers */}
       {isModalOpen && user?.role === 'Manager' && (
-        <div className="fixed inset-0 bg-black/60 flex justify-center items-center p-4 z-50">
-          <div className="bg-[#1E293B] border border-[#334155] rounded-xl shadow-2xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col">
-            <div className="flex justify-between items-center p-4 border-b border-[#334155]">
-              <h3 className="text-lg font-semibold text-[#F8FAFC]">
-                {editingProject ? 'Edit Project' : 'New Project'}
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col border border-slate-100">
+            <div className="flex justify-between items-center px-8 py-5 border-b border-slate-100 bg-white">
+              <h3 className="text-xl font-bold text-slate-900">
+                {editingProject ? 'Edit Project' : 'Create New Project'}
               </h3>
-              <button onClick={closeModal} className="text-[#94A3B8] hover:text-white">
-                <X size={20} />
+              <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 transition-colors bg-slate-50 hover:bg-slate-100 p-2 rounded-full">
+                <X size={18} />
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
-              <div>
-                <label className="block text-sm font-medium text-[#94A3B8] mb-1">Project Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-                />
-              </div>
+            <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-0 space-y-0 flex flex-col h-full">
               
-              <div>
-                <label className="block text-sm font-medium text-[#94A3B8] mb-1">Description (Optional)</label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows={3}
-                  className="mt-1 block w-full bg-[#0D1626] border border-white/5 rounded-lg shadow-sm py-2.5 px-4 text-[#FFFFFF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6]"
-                />
-              </div>
+              <div className="p-8 space-y-6 flex-1 overflow-y-auto">
+                {/* Project Name */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Project Name <span className="text-red-500">*</span></label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    placeholder="e.g. Q3 Marketing Campaign"
+                    className="block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10 hover:border-slate-300 transition-all shadow-sm text-[15px]"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#94A3B8] mb-2">Assign Team Members</label>
-                <div className="bg-[#0D1626] border border-white/5 rounded-lg max-h-40 overflow-y-auto p-2 space-y-1">
-                  {users.length === 0 ? (
-                    <div className="text-sm text-[#94A3B8] p-2">No users found.</div>
-                  ) : (
-                    users.map(u => (
-                      <label key={u._id} className="flex items-center p-2 hover:bg-[#1E293B] rounded cursor-pointer transition-colors">
-                        <input 
-                          type="checkbox" 
-                          checked={formData.assignedMembers.includes(u._id)}
-                          onChange={() => toggleUserAssignment(u._id)}
-                          className="w-4 h-4 rounded border-gray-600 bg-gray-700 text-[#3B82F6] focus:ring-[#3B82F6] focus:ring-offset-gray-800"
-                        />
-                        <div className="ml-3">
-                          <span className="block text-sm text-[#F8FAFC]">{u.name}</span>
-                          <span className="block text-xs text-[#94A3B8]">{u.role}</span>
+                {/* Status & Priority Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Status</label>
+                    <select
+                      name="status"
+                      value={formData.status}
+                      onChange={handleChange}
+                      className="block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-medium focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10 hover:border-slate-300 transition-all shadow-sm text-[15px]"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="On Hold">On Hold</option>
+                      <option value="Completed">Completed</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Priority Level</label>
+                    <select
+                      name="priority"
+                      value={formData.priority}
+                      onChange={handleChange}
+                      className="block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-medium focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10 hover:border-slate-300 transition-all shadow-sm text-[15px]"
+                    >
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Dates Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">Start Date</label>
+                    <input
+                      type="date"
+                      name="startDate"
+                      value={formData.startDate}
+                      onChange={handleChange}
+                      className="block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-medium focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10 hover:border-slate-300 transition-all shadow-sm text-[15px]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">End Date</label>
+                    <input
+                      type="date"
+                      name="endDate"
+                      value={formData.endDate}
+                      onChange={handleChange}
+                      className="block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-medium focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10 hover:border-slate-300 transition-all shadow-sm text-[15px]"
+                    />
+                  </div>
+                </div>
+                
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Description <span className="text-slate-400 font-normal">(Optional)</span></label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    rows={3}
+                    placeholder="Provide a brief overview of the project's goals."
+                    className="block w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:border-[#FF6B35] focus:ring-4 focus:ring-[#FF6B35]/10 hover:border-slate-300 transition-all shadow-sm text-[15px] resize-y"
+                  />
+                </div>
+
+                {/* Team Members */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">Assign Team Members</label>
+                  
+                  <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+                    <div className="bg-slate-50 border-b border-slate-200 px-4 py-2">
+                      <input
+                        type="text"
+                        placeholder="Search members by name..."
+                        value={memberSearch}
+                        onChange={(e) => setMemberSearch(e.target.value)}
+                        className="w-full bg-transparent border-none focus:outline-none text-[14px] text-slate-700 placeholder-slate-400"
+                      />
+                    </div>
+                    
+                    <div className="max-h-[220px] overflow-y-auto p-2">
+                      {users.filter(u => u.name.toLowerCase().includes(memberSearch.toLowerCase())).length === 0 ? (
+                        <div className="text-[14px] text-slate-400 p-4 text-center">No users found.</div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {users.filter(u => u.name.toLowerCase().includes(memberSearch.toLowerCase())).map(u => (
+                            <label key={u._id} className={`flex items-center p-3 rounded-xl cursor-pointer transition-all border ${formData.assignedMembers.includes(u._id) ? 'bg-[#FF6B35]/5 border-[#FF6B35]/30' : 'bg-white border-transparent hover:bg-slate-50'}`}>
+                              <input 
+                                type="checkbox" 
+                                checked={formData.assignedMembers.includes(u._id)}
+                                onChange={() => toggleUserAssignment(u._id)}
+                                className="w-4 h-4 rounded border-slate-300 text-[#FF6B35] focus:ring-[#FF6B35] mr-3"
+                              />
+                              <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600 mr-3 shrink-0">
+                                {getInitials(u.name)}
+                              </div>
+                              <div className="min-w-0">
+                                <span className="block text-[14px] font-semibold text-slate-900 truncate">{u.name}</span>
+                                <span className="block text-[12px] text-slate-500 truncate">{u.role}</span>
+                              </div>
+                            </label>
+                          ))}
                         </div>
-                      </label>
-                    ))
-                  )}
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-[12px] text-slate-400 mt-2">Select the team members who will have access to this project.</p>
                 </div>
               </div>
 
-              <div className="pt-4 flex justify-end gap-3 border-t border-[#334155] mt-4">
+              <div className="px-8 py-5 flex justify-end gap-3 border-t border-slate-100 bg-slate-50/50">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 text-[#94A3B8] hover:text-white transition-colors font-medium"
+                  className="px-5 py-2.5 bg-white text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300 transition-all font-semibold shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#3B82F6] shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-all disabled:opacity-50 font-medium"
+                  className="px-6 py-2.5 bg-[#FF6B35] text-white rounded-xl hover:bg-[#E55A2B] shadow-sm transition-all disabled:opacity-50 font-semibold hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 flex items-center"
                 >
-                  {isSaving ? 'Saving...' : 'Save Project'}
+                  {isSaving ? (
+                    <><Loader2 className="animate-spin mr-2" size={16} /> Saving...</>
+                  ) : (
+                    'Save Project'
+                  )}
                 </button>
               </div>
             </form>
