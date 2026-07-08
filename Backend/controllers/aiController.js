@@ -45,7 +45,7 @@ Blockers: ${r.blockers || 'None'}
   }).join('\n');
 
   // 2. Prepare the prompt for Gemini
-  // gemini-1.5-flash is generally faster and highly capable for this type of task
+  // gemini-2.5-flash is currently the only model that has a free quota limit > 0 for this account
   const model = genAI.getGenerativeModel({
     model: "gemini-2.5-flash",
     systemInstruction: "You are an executive AI Management Assistant for TeamReports. Your role is to analyze the provided raw weekly team reports context and answer the manager's query clearly. RULES:\n1. If the manager greets you (e.g. 'Hi', 'Hello'), respond naturally and conversationally without analyzing reports.\n2. Only analyze and provide project/team data when specifically requested.\n3. ALWAYS use gender-neutral pronouns (they/them/their) when referring to employees, or refer to them strictly by their name, to completely avoid any misgendering. Be concise and professional."
@@ -70,7 +70,7 @@ Manager's Query: ${message}
     });
   } catch (error) {
     console.error('Gemini API Error:', error);
-    
+
     // Handle Google API rate limits gracefully
     if (error.status === 429) {
       res.status(429).json({
@@ -79,7 +79,7 @@ Manager's Query: ${message}
       });
       return;
     }
-    
+
     res.status(500);
     throw new Error('Failed to generate AI response');
   }
