@@ -23,6 +23,7 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
+app.use('/api/ai', require('./routes/aiRoutes'));
 
 // Basic route
 app.get('/', (req, res) => {
