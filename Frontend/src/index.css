@@ -18,3 +18,15 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+
+@keyframes float-delay {
+  0%, 75%, 100% { transform: translateY(0); }
+  80% { transform: translateY(-8px); }
+  85% { transform: translateY(0); }
+  90% { transform: translateY(-4px); }
+  95% { transform: translateY(0); }
+}
+
+.animate-float-delay {
+  animation: float-delay 7s infinite ease-in-out;
+}
