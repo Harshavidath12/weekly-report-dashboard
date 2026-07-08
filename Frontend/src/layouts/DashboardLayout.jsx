@@ -3,6 +3,7 @@ import { Outlet, Navigate, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { LogOut, LayoutDashboard, FileText, Folder, User, Menu, ChevronLeft } from 'lucide-react';
 import iconImage from '../assets/icon.png';
+import AIChatAssistant from '../components/AIChatAssistant';
 
 const DashboardLayout = () => {
   const { user, logout, loading } = useAuth();
@@ -129,6 +130,9 @@ const DashboardLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* AI Chat Assistant - Only visible to Managers */}
+      {user?.role === 'Manager' && <AIChatAssistant />}
     </div>
   );
 };
