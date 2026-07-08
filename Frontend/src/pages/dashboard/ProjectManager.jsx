@@ -12,7 +12,7 @@ const ProjectManager = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -50,25 +50,25 @@ const ProjectManager = () => {
   const openModal = (project = null) => {
     if (project) {
       setEditingProject(project);
-      setFormData({ 
-        name: project.name || '', 
+      setFormData({
+        name: project.name || '',
         description: project.description || '',
         status: project.status || 'Active',
         priority: project.priority || 'Medium',
         startDate: project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : '',
         endDate: project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : '',
-        assignedMembers: project.assignedMembers || [] 
+        assignedMembers: project.assignedMembers || []
       });
     } else {
       setEditingProject(null);
-      setFormData({ 
-        name: '', 
-        description: '', 
+      setFormData({
+        name: '',
+        description: '',
         status: 'Active',
         priority: 'Medium',
         startDate: '',
         endDate: '',
-        assignedMembers: [] 
+        assignedMembers: []
       });
     }
     setMemberSearch('');
@@ -96,7 +96,7 @@ const ProjectManager = () => {
       const isAssigned = prev.assignedMembers.includes(userId);
       return {
         ...prev,
-        assignedMembers: isAssigned 
+        assignedMembers: isAssigned
           ? prev.assignedMembers.filter(id => id !== userId)
           : [...prev.assignedMembers, userId]
       };
@@ -158,15 +158,15 @@ const ProjectManager = () => {
             {user?.role === 'Manager' ? 'Project Management' : 'Available Projects'}
           </h2>
           <p className="text-slate-500 mt-1">
-            {user?.role === 'Manager' 
-              ? 'Manage projects and assign team members.' 
+            {user?.role === 'Manager'
+              ? 'Manage projects and assign team members.'
               : 'Browse active projects and join them to start reporting.'}
           </p>
         </div>
         {user?.role === 'Manager' && (
           <button
             onClick={() => openModal()}
-            className="flex items-center px-4 py-2 bg-[#2563EB] text-white rounded-lg hover:bg-[#3B82F6] shadow-[0_4px_14px_0_rgba(37,99,235,0.39)] transition-all font-medium"
+            className="flex items-center px-4 py-2 bg-white text-black border-2 border-[#FF6B35] rounded-lg hover:bg-[#FF6B35] hover:text-white transition-all font-medium"
           >
             <Plus size={18} className="mr-2" /> Add Project
           </button>
@@ -203,23 +203,21 @@ const ProjectManager = () => {
                         <Folder size={16} className="text-orange-500 shrink-0" />
                         <span className="break-words">{project.name}</span>
                         {project.priority && (
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0 ${
-                            project.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' :
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0 ${project.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' :
                             project.priority === 'Low' ? 'bg-slate-100 text-slate-600 border border-slate-200' :
-                            'bg-amber-50 text-amber-700 border border-amber-200'
-                          }`}>
+                              'bg-amber-50 text-amber-700 border border-amber-200'
+                            }`}>
                             {project.priority}
                           </span>
                         )}
                       </h3>
-                      
+
                       <div className="flex flex-wrap items-center gap-2 shrink-0">
                         {project.status && (
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium border whitespace-nowrap ${
-                            project.status === 'Active' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium border whitespace-nowrap ${project.status === 'Active' ? 'bg-blue-50 text-blue-700 border-blue-100' :
                             project.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-100' :
-                            'bg-slate-100 text-slate-600 border-slate-200'
-                          }`}>
+                              'bg-slate-100 text-slate-600 border-slate-200'
+                            }`}>
                             {project.status}
                           </span>
                         )}
@@ -243,7 +241,7 @@ const ProjectManager = () => {
                       </span>
                     )}
                   </div>
-                  
+
                   <div className="mt-4 pt-4 border-t border-slate-100 flex justify-end gap-2">
                     {user?.role === 'Manager' ? (
                       <>
@@ -297,9 +295,9 @@ const ProjectManager = () => {
                 <X size={18} />
               </button>
             </div>
-            
+
             <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-0 space-y-0 flex flex-col h-full">
-              
+
               <div className="p-8 space-y-6 flex-1 overflow-y-auto">
                 {/* Project Name */}
                 <div>
@@ -368,7 +366,7 @@ const ProjectManager = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Description */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">Description <span className="text-slate-400 font-normal">(Optional)</span></label>
@@ -385,7 +383,7 @@ const ProjectManager = () => {
                 {/* Team Members */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">Assign Team Members</label>
-                  
+
                   <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
                     <div className="bg-slate-50 border-b border-slate-200 px-4 py-2">
                       <input
@@ -396,7 +394,7 @@ const ProjectManager = () => {
                         className="w-full bg-transparent border-none focus:outline-none text-[14px] text-slate-700 placeholder-slate-400"
                       />
                     </div>
-                    
+
                     <div className="max-h-[220px] overflow-y-auto p-2">
                       {users.filter(u => u.name.toLowerCase().includes(memberSearch.toLowerCase())).length === 0 ? (
                         <div className="text-[14px] text-slate-400 p-4 text-center">No users found.</div>
@@ -404,8 +402,8 @@ const ProjectManager = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {users.filter(u => u.name.toLowerCase().includes(memberSearch.toLowerCase())).map(u => (
                             <label key={u._id} className={`flex items-center p-3 rounded-xl cursor-pointer transition-all border ${formData.assignedMembers.includes(u._id) ? 'bg-[#FF6B35]/5 border-[#FF6B35]/30' : 'bg-white border-transparent hover:bg-slate-50'}`}>
-                              <input 
-                                type="checkbox" 
+                              <input
+                                type="checkbox"
                                 checked={formData.assignedMembers.includes(u._id)}
                                 onChange={() => toggleUserAssignment(u._id)}
                                 className="w-4 h-4 rounded border-slate-300 text-[#FF6B35] focus:ring-[#FF6B35] mr-3"
