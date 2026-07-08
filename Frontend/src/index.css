@@ -30,3 +30,12 @@ input::-ms-clear {
 .animate-float-delay {
   animation: float-delay 7s infinite ease-in-out;
 }
+
+/* Hide scrollbar for the chat input field so it doesn't overlap the send button */
+.custom-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
