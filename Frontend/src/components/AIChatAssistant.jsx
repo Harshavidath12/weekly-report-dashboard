@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Loader2, Bot } from 'lucide-react';
+import { Sparkles, X, Send, Loader2, Bot } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 
@@ -54,14 +54,24 @@ const AIChatAssistant = () => {
 
   return (
     <>
-      {/* Chat Widget Button */}
-      <button
-        onClick={toggleChat}
-        className={`bg-orange-600 hover:bg-orange-700 text-white p-4 rounded-full shadow-lg z-50 fixed bottom-6 right-6 transition-transform duration-300 ${isOpen ? 'scale-0' : 'scale-100 hover:-translate-y-1'}`}
-        aria-label="Open AI Assistant"
-      >
-        <MessageSquare size={24} />
-      </button>
+      {/* Chat Widget Button & Pill */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end group">
+        {!isOpen && (
+          <div className="absolute bottom-[72px] right-0 animate-float-delay origin-bottom-right transition-transform duration-300 group-hover:scale-105">
+            <div className="bg-white text-slate-700 text-[13px] font-medium px-4 py-2 rounded-2xl shadow-lg border border-slate-100/80 whitespace-nowrap relative">
+              ✨ Try me!
+              <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-white border-b border-r border-slate-100/80 transform rotate-45 rounded-sm"></div>
+            </div>
+          </div>
+        )}
+        <button
+          onClick={toggleChat}
+          className={`bg-gradient-to-br from-[#FF8A00] to-[#FF5E00] text-white p-4 rounded-full shadow-[0_8px_30px_rgb(255,94,0,0.3)] transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_8px_30px_rgb(255,94,0,0.5)] ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
+          aria-label="Open AI Assistant"
+        >
+          <Sparkles size={24} className="opacity-90" />
+        </button>
+      </div>
 
       {/* Chat Window Panel */}
       <div 
