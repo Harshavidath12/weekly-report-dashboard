@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 import reportService from '../../services/reportService';
 import userService from '../../services/userService';
 import projectService from '../../services/projectService';
-import { ChevronDown, LayoutDashboard, Filter, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ChevronDown, LayoutDashboard, Filter, FileText, CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 const CustomDropdown = ({ value, onChange, options, defaultLabel }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,6 +74,9 @@ const ManagerDashboard = () => {
   const [status, setStatus] = useState('');
   
   const [loading, setLoading] = useState(true);
+  
+  const [selectedBlocker, setSelectedBlocker] = useState(null);
+  const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
   // Fetch initial data for dropdowns
   useEffect(() => {
@@ -344,14 +347,14 @@ const ManagerDashboard = () => {
           <h3 className="text-lg font-bold text-slate-900">Recent Activity Feed</h3>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left border-collapse table-fixed">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100">
-                <th className="px-8 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Member</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Project</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Week Period</th>
-                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                <th className="px-8 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Blockers</th>
+                <th className="px-8 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider w-[25%]">Member</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider w-[20%]">Project</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider w-[20%]">Week Period</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider w-[12%]">Status</th>
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-wider w-[23%]">Blockers</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -365,34 +368,53 @@ const ManagerDashboard = () => {
                 </tr>
               ) : (
                 reports.map(report => (
-                  <tr key={report._id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-8 py-4">
+                  <tr key={report._id} className="hover:bg-slate-50 transition-colors duration-200 group even:bg-slate-50/30">
+                    <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-600 group-hover:border-[#FF6B35] group-hover:text-[#FF6B35] transition-colors">
+                        <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[13px] font-bold text-slate-600 group-hover:border-[#FF6B35] group-hover:text-[#FF6B35] transition-colors duration-200 shrink-0">
                           {getInitials(report.user?.name)}
                         </div>
-                        <div>
-                          <div className="font-semibold text-[14px] text-slate-900">{report.user?.name || 'Unknown'}</div>
-                          <div className="text-[13px] text-slate-500 font-medium">{report.user?.email}</div>
+                        <div className="min-w-0">
+                          <div className="font-bold text-[14px] text-slate-900 truncate">{report.user?.name || 'Unknown'}</div>
+                          <div className="text-[12px] text-slate-400 font-normal truncate">{report.user?.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-[14px] font-medium text-slate-700">{report.project?.name || 'N/A'}</td>
-                    <td className="px-6 py-4 text-[14px] font-medium text-slate-600 whitespace-nowrap">
+                    <td className="px-6 py-5 text-[14px] font-medium text-slate-700 truncate">{report.project?.name || 'N/A'}</td>
+                    <td className="px-6 py-5 text-[13px] font-medium text-slate-600 whitespace-nowrap">
                       {formatDate(report.weekStartDate)} <span className="text-slate-300 mx-1">→</span> {formatDate(report.weekEndDate)}
                     </td>
-                    <td className="px-6 py-4">
-                      <span className={`px-3 py-1 rounded-full text-[12px] font-bold tracking-wide ${report.submissionStatus === 'submitted' ? 'bg-green-50 text-green-700 border border-green-200/50' : 'bg-[#FF6B35]/10 text-[#FF6B35] border border-[#FF6B35]/20'}`}>
+                    <td className="px-6 py-5">
+                      <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wide ${report.submissionStatus === 'submitted' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}`}>
                         {report.submissionStatus === 'submitted' ? 'SUBMITTED' : 'DRAFT'}
                       </span>
                     </td>
-                    <td className="px-8 py-4 text-[14px] text-slate-700 max-w-[250px] truncate">
+                    <td className="px-6 py-5 text-[14px]">
                       {report.blockers ? (
-                        <span className="text-red-500 font-medium flex items-center gap-1.5" title={report.blockers}>
-                          <AlertCircle size={14} /> {report.blockers}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200" title="Needs Attention">
+                            <AlertCircle size={12} />
+                          </span>
+                          <span 
+                            className="text-slate-600 truncate max-w-[150px] xl:max-w-[200px]" 
+                            title={report.blockers}
+                          >
+                            {report.blockers.length > 50 ? report.blockers.substring(0, 50) + '...' : report.blockers}
+                          </span>
+                          {report.blockers.length > 50 && (
+                            <button
+                              onClick={() => {
+                                setSelectedBlocker({ text: report.blockers, user: report.user?.name });
+                                setIsBlockerModalOpen(true);
+                              }}
+                              className="shrink-0 text-[#FF6B35] text-[12px] font-semibold hover:underline ml-1"
+                            >
+                              View
+                            </button>
+                          )}
+                        </div>
                       ) : (
-                        <span className="text-slate-400 italic">None</span>
+                        <span className="text-slate-400 italic text-[13px]">None</span>
                       )}
                     </td>
                   </tr>
@@ -402,6 +424,40 @@ const ManagerDashboard = () => {
           </table>
         </div>
       </div>
+
+      {/* Blocker Modal */}
+      {isBlockerModalOpen && selectedBlocker && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex justify-center items-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden flex flex-col border border-slate-100">
+            <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <AlertCircle className="text-amber-500" size={20} />
+                Blocker Details
+              </h3>
+              <button 
+                onClick={() => setIsBlockerModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors bg-white hover:bg-slate-100 p-1.5 rounded-full shadow-sm border border-slate-200"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-slate-500 mb-3">Reported by <span className="font-semibold text-slate-700">{selectedBlocker.user || 'Unknown'}</span></p>
+              <div className="bg-amber-50/50 border border-amber-100 rounded-xl p-4 text-slate-700 text-[15px] leading-relaxed whitespace-pre-wrap">
+                {selectedBlocker.text}
+              </div>
+            </div>
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => setIsBlockerModalOpen(false)}
+                className="px-4 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors font-semibold text-sm shadow-sm"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
