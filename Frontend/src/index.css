@@ -18,3 +18,24 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+
+@keyframes float-delay {
+  0%, 75%, 100% { transform: translateY(0); }
+  80% { transform: translateY(-8px); }
+  85% { transform: translateY(0); }
+  90% { transform: translateY(-4px); }
+  95% { transform: translateY(0); }
+}
+
+.animate-float-delay {
+  animation: float-delay 7s infinite ease-in-out;
+}
+
+/* Hide scrollbar for the chat input field so it doesn't overlap the send button */
+.custom-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.custom-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
