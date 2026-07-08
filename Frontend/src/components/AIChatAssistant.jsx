@@ -46,7 +46,8 @@ const AIChatAssistant = () => {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('Chat error:', error);
-      setMessages(prev => [...prev, { role: 'ai', text: 'Sorry, I encountered an error. Please try again.' }]);
+      const errorMessage = error.response?.data?.message || 'Sorry, I encountered an error. Please try again.';
+      setMessages(prev => [...prev, { role: 'ai', text: errorMessage }]);
     } finally {
       setIsLoading(false);
     }

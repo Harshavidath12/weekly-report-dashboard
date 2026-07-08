@@ -52,6 +52,8 @@ Blockers: ${r.blockers || 'None'}
   });
 
   const fullPrompt = `
+Current Date: ${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+
 Here is the recent team weekly reports context:
 ${contextData}
 
@@ -68,6 +70,16 @@ Manager's Query: ${message}
     });
   } catch (error) {
     console.error('Gemini API Error:', error);
+    
+    // Handle Google API rate limits gracefully
+    if (error.status === 429) {
+      res.status(429).json({
+        success: false,
+        message: "I'm receiving too many requests right now. Please wait about 10 seconds and try again."
+      });
+      return;
+    }
+    
     res.status(500);
     throw new Error('Failed to generate AI response');
   }
