@@ -37,7 +37,7 @@ const ProjectManager = () => {
         user?.role === 'Manager' ? userService.getAllUsers() : Promise.resolve([])
       ]);
       setProjects(projectsData);
-      setUsers(usersData);
+      setUsers(usersData.filter(u => u.role === 'Team Member'));
       setError(null);
     } catch (err) {
       setError('Failed to fetch data.');
