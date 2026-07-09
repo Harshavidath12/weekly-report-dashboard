@@ -160,7 +160,7 @@ const PersonalReport = () => {
                     onClick={() => handleEdit(report)}
                     className="flex items-center px-4 py-2 text-sm border border-orange-600 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors font-medium"
                   >
-                    {report.submissionStatus === 'submitted' ? (
+                    {report.submissionStatus === 'submitted' || (report.user?._id || report.user) !== user?._id ? (
                       <><FileText size={16} className="mr-2 text-orange-500" /> View</>
                     ) : (
                       <><Edit2 size={16} className="mr-2 text-orange-500" /> Edit</>
