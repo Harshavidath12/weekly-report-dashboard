@@ -88,7 +88,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
   const inputClasses = "mt-2 block w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 hover:border-slate-300 transition-all shadow-sm text-[15px]";
   const labelClasses = "flex items-center text-sm font-semibold text-slate-700 mb-1.5";
 
-  const isReadOnly = initialData?.submissionStatus === 'submitted';
+  const isReadOnly = initialData?.submissionStatus === 'submitted' || (initialData && (initialData.user?._id || initialData.user) !== user?._id);
 
   // Find the selected project object for display in read-only view
   const selectedProjectObj = projects.find(p => p._id === formData.project);
@@ -105,9 +105,13 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
               Weekly Report
             </h2>
           </div>
-          <span className="px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full text-sm font-medium flex items-center shadow-sm">
-            <CheckCircle2 size={16} className="mr-1.5" />
-            Submitted and Locked
+          <span className={`px-3 py-1 rounded-full text-sm font-medium flex items-center shadow-sm ${
+            initialData?.submissionStatus === 'submitted' 
+              ? 'bg-green-50 text-green-700 border border-green-200'
+              : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+          }`}>
+            {initialData?.submissionStatus === 'submitted' && <CheckCircle2 size={16} className="mr-1.5" />}
+            {initialData?.submissionStatus === 'submitted' ? 'Submitted and Locked' : 'Draft (View Only)'}
           </span>
         </div>
 
