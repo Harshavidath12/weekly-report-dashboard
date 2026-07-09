@@ -41,7 +41,7 @@ MONGO_URI=your_mongodb_connection_string_here
 JWT_SECRET=your_super_secret_jwt_key
 GEMINI_API_KEY=your_google_gemini_api_key
 ```
-*(Note: Do not commit your actual `.env` file to version control).*
+
 
 ---
 
