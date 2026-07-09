@@ -198,10 +198,13 @@ const ProjectManager = () => {
               return (
                 <div key={project._id} className={`bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-between ${isAssigned ? 'border-l-4 border-l-orange-500' : ''}`}>
                   <div>
-                    <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
-                      <h3 className="font-bold text-slate-900 text-lg flex flex-wrap items-center gap-2 max-w-full">
-                        <Folder size={16} className="text-orange-500 shrink-0" />
-                        <span className="break-words">{project.name}</span>
+                    <div className="mb-2">
+                      <h3 className="font-bold text-slate-900 text-lg flex items-start gap-2 mb-2">
+                        <Folder size={18} className="text-orange-500 shrink-0 mt-0.5" />
+                        <span className="break-words leading-tight">{project.name}</span>
+                      </h3>
+
+                      <div className="flex flex-wrap items-center gap-2">
                         {project.priority && (
                           <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider shrink-0 ${project.priority === 'High' ? 'bg-red-50 text-red-700 border border-red-200' :
                             project.priority === 'Low' ? 'bg-slate-100 text-slate-600 border border-slate-200' :
@@ -210,9 +213,6 @@ const ProjectManager = () => {
                             {project.priority}
                           </span>
                         )}
-                      </h3>
-
-                      <div className="flex flex-wrap items-center gap-2 shrink-0">
                         {project.status && (
                           <span className={`text-xs px-2 py-0.5 rounded-full font-medium border whitespace-nowrap ${project.status === 'Active' ? 'bg-blue-50 text-blue-700 border-blue-100' :
                             project.status === 'Completed' ? 'bg-green-50 text-green-700 border-green-100' :
