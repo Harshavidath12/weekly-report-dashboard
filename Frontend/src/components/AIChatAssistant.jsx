@@ -8,12 +8,12 @@ const AIChatAssistant = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
+
   // Custom states for dragging and pill logic
   const [position, setPosition] = useState({ right: 24, bottom: 110 });
   const [hasOpened, setHasOpened] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
-  
+
   const messagesEndRef = useRef(null);
   const dragRef = useRef({ startX: 0, startY: 0, startRight: 24, startBottom: 110, isDragging: false });
   const { user } = useAuth();
@@ -39,7 +39,7 @@ const AIChatAssistant = () => {
 
   const handlePointerDown = (e) => {
     if (e.button !== 0) return; // Only left clicks
-    
+
     dragRef.current = {
       startX: e.clientX,
       startY: e.clientY,
@@ -47,11 +47,11 @@ const AIChatAssistant = () => {
       startBottom: position.bottom,
       isDragging: false,
     };
-    
+
     const handlePointerMove = (moveEvent) => {
       const dx = moveEvent.clientX - dragRef.current.startX;
       const dy = moveEvent.clientY - dragRef.current.startY;
-      
+
       // Require at least 3px of movement to be considered a drag instead of a click
       if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
         dragRef.current.isDragging = true;
@@ -113,7 +113,7 @@ const AIChatAssistant = () => {
   return (
     <>
       {/* Chat Widget Button & Pill */}
-      <div 
+      <div
         className="fixed z-50 flex flex-col items-end group touch-none cursor-grab active:cursor-grabbing"
         style={{ right: `${position.right}px`, bottom: `${position.bottom}px` }}
         onPointerDown={handlePointerDown}
@@ -169,8 +169,8 @@ const AIChatAssistant = () => {
             <div key={index} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
               <div
                 className={`max-w-[85%] p-3 rounded-2xl text-[13px] leading-relaxed whitespace-pre-wrap ${msg.role === 'user'
-                    ? 'bg-orange-50 border border-orange-200/50 text-slate-800 rounded-br-sm'
-                    : 'bg-white border border-slate-200 shadow-sm text-slate-700 rounded-bl-sm'
+                  ? 'bg-orange-50 border border-orange-200/50 text-slate-800 rounded-br-sm'
+                  : 'bg-white border border-slate-200 shadow-sm text-slate-700 rounded-bl-sm'
                   }`}
               >
                 {msg.text}
