@@ -290,7 +290,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
 
                   <optgroup label="My Assigned Projects">
                     {projects.filter(p => p.assignedMembers?.includes(user?._id)).length === 0 ? (
-                      <option disabled>No Assigned Projects Yet !</option>
+                      <option disabled>You haven't joined any projects yet</option>
                     ) : (
                       projects.filter(p => p.assignedMembers?.includes(user?._id)).map((proj) => (
                         <option key={proj._id} value={proj._id}>
@@ -298,14 +298,6 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
                         </option>
                       ))
                     )}
-                  </optgroup>
-
-                  <optgroup label="Other Projects">
-                    {projects.filter(p => !p.assignedMembers?.includes(user?._id)).map((proj) => (
-                      <option key={proj._id} value={proj._id}>
-                        {proj.name}
-                      </option>
-                    ))}
                   </optgroup>
                 </select>
               )}
