@@ -121,7 +121,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
               {formData.weekStartDate} <span className="text-slate-400 mx-1">to</span> {formData.weekEndDate}
             </div>
           </div>
-          
+
           <div className="bg-slate-50 rounded-2xl p-5 border border-slate-100">
             <div className="flex items-center text-slate-500 text-sm font-medium mb-2">
               <Folder size={16} className="mr-2" /> Project
@@ -250,6 +250,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
                   value={formData.weekStartDate}
                   onChange={handleChange}
                   required
+                  max={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]}
                   className={inputClasses}
                 />
               </div>
@@ -263,6 +264,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
                   value={formData.weekEndDate}
                   onChange={handleChange}
                   required
+                  max={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]}
                   className={inputClasses}
                 />
               </div>
@@ -285,7 +287,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
                   className={inputClasses}
                 >
                   <option value="" disabled>Select a project</option>
-                  
+
                   <optgroup label="My Assigned Projects">
                     {projects.filter(p => p.assignedMembers?.includes(user?._id)).length === 0 ? (
                       <option disabled>No Assigned Projects Yet !</option>
@@ -297,7 +299,7 @@ const ReportForm = ({ initialData, onSave, isSaving }) => {
                       ))
                     )}
                   </optgroup>
-                  
+
                   <optgroup label="Other Projects">
                     {projects.filter(p => !p.assignedMembers?.includes(user?._id)).map((proj) => (
                       <option key={proj._id} value={proj._id}>
