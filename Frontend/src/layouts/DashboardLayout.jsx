@@ -81,10 +81,10 @@ const DashboardLayout = () => {
               className={({ isActive }) =>
                 `flex items-center ${isSidebarCollapsed ? 'justify-center p-3 rounded-xl' : 'gap-4 px-5 py-3 border-l-4 rounded-r-2xl'} font-semibold text-[15px] transition-all duration-300 ${isActive ? (isSidebarCollapsed ? 'bg-[#FF6B35] text-white shadow-sm' : 'bg-[#FF6B35]/10 border-[#FF6B35] text-[#FF6B35]') : 'border-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`
               }
-              title={isSidebarCollapsed ? "My Reports" : ""}
+              title={isSidebarCollapsed ? (user?.role === 'Manager' ? 'Team Reports' : 'My Reports') : ""}
             >
               <FileText size={18} />
-              {!isSidebarCollapsed && <span>My Reports</span>}
+              {!isSidebarCollapsed && <span>{user?.role === 'Manager' ? 'Team Reports' : 'My Reports'}</span>}
             </NavLink>
           </nav>
         </div>

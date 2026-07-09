@@ -20,7 +20,7 @@ const PersonalReport = () => {
   const fetchReports = async () => {
     try {
       setLoading(true);
-      const data = await reportService.getMyReports();
+      const data = await (user?.role === 'Manager' ? reportService.getAllReports() : reportService.getMyReports());
       setReports(data);
       setError(null);
     } catch (err) {
@@ -76,19 +76,21 @@ const PersonalReport = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">My Weekly Reports</h2>
+          <h2 className="text-2xl font-bold text-slate-900">{user?.role === 'Manager' ? 'Team Weekly Reports' : 'My Weekly Reports'}</h2>
           <p className="text-slate-500 mt-1">
-            Manage your personal report submissions.
+            {user?.role === 'Manager' ? 'View and analyze reports submitted by the whole team.' : 'Manage your personal report submissions.'}
           </p>
         </div>
         
         {view === 'list' ? (
-          <button
-            onClick={() => setView('create')}
-            className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-sm transition-all font-medium"
-          >
-            <Plus size={18} className="mr-2" /> New Report
-          </button>
+          user?.role !== 'Manager' && (
+            <button
+              onClick={() => setView('create')}
+              className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 shadow-sm transition-all font-medium"
+            >
+              <Plus size={18} className="mr-2" /> New Report
+            </button>
+          )
         ) : (
           <button
             onClick={() => { setView('list'); setSelectedReport(null); }}
@@ -112,13 +114,15 @@ const PersonalReport = () => {
             <div className="bg-white p-12 rounded-xl border border-slate-100 shadow-sm text-center">
               <FileText size={48} className="mx-auto text-slate-300 mb-4" />
               <h3 className="text-lg font-medium text-slate-900 mb-2">No reports yet</h3>
-              <p className="text-slate-500 mb-6">Create your first weekly report to get started.</p>
-              <button
-                onClick={() => setView('create')}
-                className="inline-flex items-center px-4 py-2 bg-orange-600 text-white hover:bg-orange-700 rounded-lg transition-colors font-medium"
-              >
-                <Plus size={18} className="mr-2" /> Create Report
-              </button>
+              <p className="text-slate-500 mb-6">{user?.role === 'Manager' ? 'No reports have been submitted by the team yet.' : 'Create your first weekly report to get started.'}</p>
+              {user?.role !== 'Manager' && (
+                <button
+                  onClick={() => setView('create')}
+                  className="inline-flex items-center px-4 py-2 bg-orange-600 text-white hover:bg-orange-700 rounded-lg transition-colors font-medium"
+                >
+                  <Plus size={18} className="mr-2" /> Create Report
+                </button>
+              )}
             </div>
           ) : (
             <div className="grid gap-4">
@@ -140,7 +144,13 @@ const PersonalReport = () => {
                         {report.submissionStatus.charAt(0).toUpperCase() + report.submissionStatus.slice(1)}
                       </span>
                     </div>
-                    <p className="text-sm text-slate-500 flex items-center gap-2">
+                    <p className="text-sm text-slate-500 flex items-center gap-2 mt-1">
+                      {user?.role === 'Manager' && (
+                        <>
+                          <span className="font-semibold text-slate-700">{report.user?.name || 'Unknown User'}</span>
+                          <span className="text-slate-300">•</span>
+                        </>
+                      )}
                       <span className="w-2 h-2 rounded-full bg-orange-500"></span>
                       {report.project?.name || 'Unknown Project'}
                     </p>
