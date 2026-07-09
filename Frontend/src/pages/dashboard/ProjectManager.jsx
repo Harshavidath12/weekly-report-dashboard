@@ -24,6 +24,11 @@ const ProjectManager = () => {
   });
   const [memberSearch, setMemberSearch] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [expandedProjects, setExpandedProjects] = useState({});
+
+  const toggleDescription = (id) => {
+    setExpandedProjects(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   useEffect(() => {
     fetchData();
@@ -228,9 +233,19 @@ const ProjectManager = () => {
                         )}
                       </div>
                     </div>
-                    <p className="text-slate-500 text-sm line-clamp-2 mt-2">
-                      {project.description || 'No description provided.'}
-                    </p>
+                    <div>
+                      <p className={`text-slate-500 text-sm mt-2 transition-all duration-300 ${expandedProjects[project._id] ? '' : 'line-clamp-2'}`}>
+                        {project.description || 'No description provided.'}
+                      </p>
+                      {project.description && project.description.length > 80 && (
+                        <button 
+                          onClick={() => toggleDescription(project._id)}
+                          className="text-[12px] text-green-600 hover:text-green-700 font-bold mt-1 transition-colors"
+                        >
+                          {expandedProjects[project._id] ? 'View less' : 'View more'}
+                        </button>
+                      )}
+                    </div>
                     <div className="mt-3 flex items-center text-slate-500 text-sm">
                       <Users size={14} className="mr-1.5" />
                       {project.assignedMembers?.length || 0} members
