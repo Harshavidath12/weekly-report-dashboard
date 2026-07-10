@@ -73,7 +73,7 @@ const updateReport = asyncHandler(async (req, res) => {
 const getMyReports = asyncHandler(async (req, res) => {
   const reports = await WeeklyReport.find({ user: req.user._id })
     .populate('project', 'name')
-    .sort({ weekStartDate: -1 });
+    .sort({ createdAt: -1 });
   res.status(200).json(reports);
 });
 
@@ -102,13 +102,13 @@ const getReportById = asyncHandler(async (req, res) => {
 // @access  Private/Manager
 const getAllReports = asyncHandler(async (req, res) => {
   const { user, project, startDate, endDate, submissionStatus } = req.query;
-  
+
   let query = {};
-  
+
   if (user) query.user = user;
   if (project) query.project = project;
   if (submissionStatus) query.submissionStatus = submissionStatus;
-  
+
   if (startDate || endDate) {
     query.weekStartDate = {};
     if (startDate) query.weekStartDate.$gte = new Date(startDate);
@@ -118,8 +118,8 @@ const getAllReports = asyncHandler(async (req, res) => {
   const reports = await WeeklyReport.find(query)
     .populate('user', 'name email')
     .populate('project', 'name')
-    .sort({ weekStartDate: -1 });
-    
+    .sort({ createdAt: -1 });
+
   res.status(200).json(reports);
 });
 
