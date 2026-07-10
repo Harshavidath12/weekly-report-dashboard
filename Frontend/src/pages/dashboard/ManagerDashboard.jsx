@@ -26,7 +26,7 @@ const CustomDropdown = ({ value, onChange, options, defaultLabel }) => {
 
   return (
     <div className="relative min-w-[140px]" ref={dropdownRef}>
-      <div 
+      <div
         onClick={() => setIsOpen(!isOpen)}
         className={`px-4 py-2 bg-white border ${value ? 'border-[#FF6B35]' : 'border-slate-200'} rounded-full text-[13px] font-medium text-slate-700 hover:border-[#FF6B35] transition-all flex justify-between items-center cursor-pointer shadow-sm`}
         tabIndex={0}
@@ -35,17 +35,17 @@ const CustomDropdown = ({ value, onChange, options, defaultLabel }) => {
         <span className="truncate mr-2">{displayLabel}</span>
         <ChevronDown size={14} className={`text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </div>
-      
+
       {isOpen && (
         <div className="absolute z-50 w-full mt-2 bg-white border border-slate-100 rounded-xl shadow-lg overflow-hidden py-1 max-h-60 overflow-y-auto">
-          <div 
+          <div
             onClick={() => { onChange(''); setIsOpen(false); }}
             className={`px-4 py-2 text-[13px] font-medium cursor-pointer transition-colors ${value === '' ? 'bg-[#FF6B35]/10 text-[#FF6B35]' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
           >
             {defaultLabel}
           </div>
           {options.map((opt) => (
-            <div 
+            <div
               key={opt.value}
               onClick={() => { onChange(opt.value); setIsOpen(false); }}
               className={`px-4 py-2 text-[13px] font-medium cursor-pointer transition-colors ${value === opt.value ? 'bg-[#FF6B35]/10 text-[#FF6B35]' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
@@ -59,22 +59,37 @@ const CustomDropdown = ({ value, onChange, options, defaultLabel }) => {
   );
 };
 
+const CustomXAxisTick = ({ x, y, payload }) => {
+  const words = payload.value.split(' ');
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text x={0} y={20} textAnchor="middle" fill="#94A3B8" fontSize={11} fontWeight={500}>
+        {words.map((word, index) => (
+          <tspan x={0} dy={index === 0 ? 0 : 14} key={index}>
+            {word}
+          </tspan>
+        ))}
+      </text>
+    </g>
+  );
+};
+
 const ManagerDashboard = () => {
   const { user } = useAuth();
-  
+
   const [reports, setReports] = useState([]);
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
-  
+
   // Filters
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedProject, setSelectedProject] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [status, setStatus] = useState('');
-  
+
   const [loading, setLoading] = useState(true);
-  
+
   const [selectedBlocker, setSelectedBlocker] = useState(null);
   const [isBlockerModalOpen, setIsBlockerModalOpen] = useState(false);
 
@@ -160,7 +175,7 @@ const ManagerDashboard = () => {
       }
       grouped[dateStr] += (r.tasksCompleted?.length || 0);
     });
-    
+
     return Object.keys(grouped)
       .sort((a, b) => dateMap[a] - dateMap[b])
       .map(date => ({
@@ -199,7 +214,7 @@ const ManagerDashboard = () => {
 
   return (
     <div className="space-y-8 max-w-[1600px] mx-auto">
-      
+
       {/* Premium Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-2">
         <div>
@@ -211,36 +226,36 @@ const ManagerDashboard = () => {
             Monitor team progress, workload distribution, and weekly reports.
           </p>
         </div>
-        
+
         {/* Inline Filters */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center text-sm font-semibold text-slate-400 mr-2 uppercase tracking-wider">
             <Filter size={14} className="mr-1.5" /> Filters
           </div>
-          <CustomDropdown 
-            value={selectedUser} 
-            onChange={setSelectedUser} 
-            options={users.map(u => ({ value: u._id, label: u.name }))} 
-            defaultLabel="All Members" 
+          <CustomDropdown
+            value={selectedUser}
+            onChange={setSelectedUser}
+            options={users.map(u => ({ value: u._id, label: u.name }))}
+            defaultLabel="All Members"
           />
-          <CustomDropdown 
-            value={selectedProject} 
-            onChange={setSelectedProject} 
-            options={projects.map(p => ({ value: p._id, label: p.name }))} 
-            defaultLabel="All Projects" 
+          <CustomDropdown
+            value={selectedProject}
+            onChange={setSelectedProject}
+            options={projects.map(p => ({ value: p._id, label: p.name }))}
+            defaultLabel="All Projects"
           />
-          <CustomDropdown 
-            value={status} 
-            onChange={setStatus} 
+          <CustomDropdown
+            value={status}
+            onChange={setStatus}
             options={[
               { value: 'submitted', label: 'Submitted' },
               { value: 'draft', label: 'Pending (Draft)' }
-            ]} 
-            defaultLabel="All Statuses" 
+            ]}
+            defaultLabel="All Statuses"
           />
         </div>
       </div>
-      
+
       {/* Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group flex items-start justify-between">
@@ -279,19 +294,19 @@ const ManagerDashboard = () => {
           <div className="flex items-center justify-between mb-8">
             <h3 className="text-base font-bold text-slate-900">Task Velocity Trend</h3>
             <div className="flex items-center gap-3">
-               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 focus:outline-none focus:border-[#FF6B35] transition-colors" />
-               <span className="text-slate-400 text-sm">to</span>
-               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 focus:outline-none focus:border-[#FF6B35] transition-colors" />
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 focus:outline-none focus:border-[#FF6B35] transition-colors" />
+              <span className="text-slate-400 text-sm">to</span>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 focus:outline-none focus:border-[#FF6B35] transition-colors" />
             </div>
           </div>
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={trendData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12, fontWeight: 500}} dy={15} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12, fontWeight: 500}} dx={-10} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 12, fontWeight: 500 }} dy={15} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 12, fontWeight: 500 }} dx={-10} />
                 <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', fontWeight: 600, color: '#0F172A' }} />
-                <Line type="monotone" dataKey="tasks" stroke="#FF6B35" strokeWidth={3} dot={{r: 4, fill: '#FF6B35', strokeWidth: 2, stroke: '#fff'}} activeDot={{r: 6, strokeWidth: 0, fill: '#FF6B35', stroke: '#FF6B35', strokeOpacity: 0.2, strokeWidth: 10}} />
+                <Line type="monotone" dataKey="tasks" stroke="#FF6B35" strokeWidth={3} dot={{ r: 4, fill: '#FF6B35', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6, strokeWidth: 0, fill: '#FF6B35', stroke: '#FF6B35', strokeOpacity: 0.2, strokeWidth: 10 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -302,11 +317,11 @@ const ManagerDashboard = () => {
           <h3 className="text-base font-bold text-slate-900 mb-8">Workload Distribution</h3>
           <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={workloadData}>
+              <BarChart data={workloadData} margin={{ bottom: 50 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12, fontWeight: 500}} dy={15} />
-                <YAxis axisLine={false} tickLine={false} tick={{fill: '#94A3B8', fontSize: 12, fontWeight: 500}} dx={-10} />
-                <Tooltip cursor={{fill: '#F8FAFC'}} contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', fontWeight: 600, color: '#0F172A' }} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={<CustomXAxisTick />} interval={0} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94A3B8', fontSize: 12, fontWeight: 500 }} dx={-10} />
+                <Tooltip cursor={{ fill: '#F8FAFC' }} contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', fontWeight: 600, color: '#0F172A' }} />
                 <Bar dataKey="tasks" fill="#0F172A" radius={[6, 6, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
@@ -333,8 +348,8 @@ const ManagerDashboard = () => {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', fontWeight: 600 }} itemStyle={{color: '#0F172A'}} />
-                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{fontSize: '13px', fontWeight: 500, color: '#64748B'}} />
+                <Tooltip contentStyle={{ borderRadius: '12px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.05)', fontWeight: 600 }} itemStyle={{ color: '#0F172A' }} />
+                <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '13px', fontWeight: 500, color: '#64748B' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -367,7 +382,7 @@ const ManagerDashboard = () => {
                   <td colSpan="5" className="p-12 text-center text-slate-400 font-medium">No reports found matching your filters.</td>
                 </tr>
               ) : (
-                reports.map(report => (
+                reports.slice(0, 4).map(report => (
                   <tr key={report._id} className="hover:bg-slate-50 transition-colors duration-200 group even:bg-slate-50/30">
                     <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
@@ -395,8 +410,8 @@ const ManagerDashboard = () => {
                           <span className="shrink-0 flex items-center gap-1 text-[11px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200" title="Needs Attention">
                             <AlertCircle size={12} />
                           </span>
-                          <span 
-                            className="text-slate-600 truncate max-w-[150px] xl:max-w-[200px]" 
+                          <span
+                            className="text-slate-600 truncate max-w-[150px] xl:max-w-[200px]"
                             title={report.blockers}
                           >
                             {report.blockers.length > 50 ? report.blockers.substring(0, 50) + '...' : report.blockers}
@@ -434,7 +449,7 @@ const ManagerDashboard = () => {
                 <AlertCircle className="text-amber-500" size={20} />
                 Blocker Details
               </h3>
-              <button 
+              <button
                 onClick={() => setIsBlockerModalOpen(false)}
                 className="text-slate-400 hover:text-slate-600 transition-colors bg-white hover:bg-slate-100 p-1.5 rounded-full shadow-sm border border-slate-200"
               >
