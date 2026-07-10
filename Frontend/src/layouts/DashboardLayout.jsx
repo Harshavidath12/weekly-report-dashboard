@@ -118,7 +118,10 @@ const DashboardLayout = () => {
 
           {/* Profile Button */}
           <div className="flex items-center gap-3 pl-4 pr-1.5 py-1.5 bg-white rounded-full border border-slate-200 shadow-sm cursor-pointer hover:border-[#FF6B35] hover:shadow-md transition-all duration-300 group">
-            <span className="text-slate-700 font-bold text-[15px] group-hover:text-slate-900 transition-colors pl-2">{getFormattedName(user.name)}</span>
+            <div className="flex flex-col items-start pl-2">
+              <span className="text-slate-700 font-bold text-[15px] leading-tight group-hover:text-slate-900 transition-colors">{getFormattedName(user.name)}</span>
+              <span className="text-slate-500 text-[11px] font-medium mt-0.5">{user?.role}</span>
+            </div>
             <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center overflow-hidden border border-slate-100 group-hover:bg-[#FF6B35]/10 group-hover:text-[#FF6B35] transition-colors">
               <User size={18} className="text-slate-500 group-hover:text-[#FF6B35] transition-colors" />
             </div>
